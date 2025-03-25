@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { HomeIcon, CalendarIcon, ListBulletIcon } from "@heroicons/react/24/outline";
+import {
+  HomeIcon,
+  CalendarIcon,
+  ListBulletIcon,
+  UserIcon,
+  CogIcon,
+} from "@heroicons/react/24/outline";
 
 export default function Sidebar() {
   return (
@@ -12,6 +18,8 @@ export default function Sidebar() {
           { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
           { name: "Tasks", href: "/tasks", icon: ListBulletIcon },
           { name: "Calendar", href: "/calendar", icon: CalendarIcon },
+          { name: "Profile", href: "/profile", icon: UserIcon },
+          { name: "Settings", href: "/settings", icon: CogIcon },
         ].map((item) => (
           <Link
             key={item.name}

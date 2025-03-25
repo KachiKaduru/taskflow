@@ -9,8 +9,8 @@ import {
   ChevronDownIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import TaskCard from "@/app/_components/dashboard/tasks/TaskCard";
-import NewTaskModal from "@/app/_components/dashboard/tasks/NewTaskModal";
+import TaskCard from "@/app/_components/tasks/TaskCard";
+import NewTaskModal from "@/app/_components/tasks/NewTaskModal";
 // import TaskCard from "@/components/TaskCard";
 
 export default function TasksPage() {
