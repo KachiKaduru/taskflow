@@ -8,15 +8,29 @@ export function TaskProvider({ children }) {
 
   // Add new task
   const addTask = (task) => {
-    setTasks([
-      ...tasks,
+    const tasksToAdd = [
       {
         ...task,
         id: Date.now(),
-        is_completed: false, // Added for completion tracking
+        is_completed: false,
         created_at: new Date().toISOString(),
       },
-    ]);
+    ];
+
+    // Handle recurring tasks
+    if (task.isRecurring && task.recurrenceDays > 1) {
+      for (let i = 1; i < task.recurrenceDays; i++) {
+        const date = new Date(task.due_date);
+        date.setDate(date.getDate() + i);
+        tasksToAdd.push({
+          ...task,
+          id: Date.now() + i,
+          due_date: date.toISOString(),
+        });
+      }
+    }
+
+    setTasks([...tasks, ...tasksToAdd]);
   };
 
   // Delete task

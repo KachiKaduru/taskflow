@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { CalendarIcon, ArrowsRightLeftIcon, ChartBarIcon } from "@heroicons/react/24/outline";
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -80,23 +82,30 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-12">
             {[
               {
-                icon: "📅",
+                icon: <CalendarIcon className="h-10 w-10 text-blue-600 mx-auto" />,
                 title: "Smart Scheduling",
                 desc: "Drag-and-drop tasks to reschedule in seconds",
               },
               {
-                icon: "🔄",
+                icon: <ArrowsRightLeftIcon className="h-10 w-10 text-blue-600 mx-auto" />,
                 title: "Calendar Sync",
                 desc: "Two-way sync with Google Calendar",
               },
               {
-                icon: "📊",
+                icon: <ChartBarIcon className="h-10 w-10 text-blue-600 mx-auto" />,
                 title: "Progress Tracking",
                 desc: "Visual charts to track your productivity",
               },
             ].map((feature, i) => (
-              <div key={i} className="text-center p-6 hover:shadow-lg rounded-xl transition-all">
-                <div className="text-4xl mb-4">{feature.icon}</div>
+              <div
+                key={i}
+                className="text-center p-6 hover:shadow-lg rounded-xl transition-all group"
+              >
+                <div className="flex justify-center mb-4">
+                  <div className="p-3 bg-blue-50 rounded-full group-hover:bg-blue-100 transition-colors">
+                    {feature.icon}
+                  </div>
+                </div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                 <p className="text-gray-600">{feature.desc}</p>
               </div>
