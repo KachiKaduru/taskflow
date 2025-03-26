@@ -10,7 +10,6 @@ import {
   CheckIcon,
 } from "@heroicons/react/24/outline";
 import NewTaskModal from "@/app/_components/tasks/NewTaskModal";
-// import NewTaskModal from "@/components/NewTaskModal";
 
 export default function DashboardHome() {
   const { tasks, toggleTaskCompletion, addTask } = useTasks();
