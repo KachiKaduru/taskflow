@@ -1,10 +1,10 @@
 import Header from "../_components/Header";
 import Sidebar from "../_components/Sidebar";
 
-export const metadata = {
-  title: "Dashboard",
-  description: "Tasks Overview",
-};
+// export const metadata = {
+//   title: "Dashboard",
+//   description: "Tasks Overview",
+// };
 
 export default function DashboardLayout({ children }) {
   return (

@@ -5,7 +5,6 @@ import PageHeader from "@/app/_components/ui/PageHeader";
 
 export const metadata = {
   title: "Dashboard",
-  description: "Tasks Overview",
 };
 
 export default function DashboardPage() {

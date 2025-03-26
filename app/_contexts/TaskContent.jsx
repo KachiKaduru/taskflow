@@ -1,18 +1,75 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useReducer } from "react";
 
-export const TaskContext = createContext();
+// Action types
+const ACTIONS = {
+  ADD_TASK: "ADD_TASK",
+  DELETE_TASK: "DELETE_TASK",
+  TOGGLE_COMPLETION: "TOGGLE_COMPLETION",
+  UPDATE_FILTERS: "UPDATE_FILTERS",
+  RESET_FILTERS: "RESET_FILTERS",
+};
 
-export function TaskProvider({ children }) {
-  const [tasks, setTasks] = useState([]);
-  const [filters, setFilters] = useState({
+// Initial state
+const initialState = {
+  tasks: [],
+  filters: {
     date: "",
     month: "",
     priority: false,
     completed: "all", // 'all', 'completed', 'incomplete'
-  });
+  },
+};
 
-  // Add new task
+// Reducer function
+function taskReducer(state, action) {
+  switch (action.type) {
+    case ACTIONS.ADD_TASK:
+      return {
+        ...state,
+        tasks: [...state.tasks, ...action.payload],
+      };
+
+    case ACTIONS.DELETE_TASK:
+      return {
+        ...state,
+        tasks: state.tasks.filter((task) => task.id !== action.payload),
+      };
+
+    case ACTIONS.TOGGLE_COMPLETION:
+      return {
+        ...state,
+        tasks: state.tasks.map((task) =>
+          task.id === action.payload ? { ...task, is_completed: !task.is_completed } : task
+        ),
+      };
+
+    case ACTIONS.UPDATE_FILTERS:
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
+          ...action.payload,
+        },
+      };
+    case ACTIONS.RESET_FILTERS:
+      return {
+        ...state,
+        filters: initialState.filters,
+      };
+
+    default:
+      return state;
+  }
+}
+
+export const TaskContext = createContext();
+
+export function TaskProvider({ children }) {
+  const [state, dispatch] = useReducer(taskReducer, initialState);
+  const { tasks, filters } = state;
+
+  // Helper functions
   const addTask = (task) => {
     const tasksToAdd = [
       {
@@ -23,7 +80,6 @@ export function TaskProvider({ children }) {
       },
     ];
 
-    // Handle recurring tasks
     if (task.isRecurring && task.recurrenceDays > 1) {
       for (let i = 1; i < task.recurrenceDays; i++) {
         const date = new Date(task.due_date);
@@ -36,22 +92,26 @@ export function TaskProvider({ children }) {
       }
     }
 
-    setTasks([...tasks, ...tasksToAdd]);
+    dispatch({ type: ACTIONS.ADD_TASK, payload: tasksToAdd });
   };
 
-  // Delete task
   const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+    dispatch({ type: ACTIONS.DELETE_TASK, payload: id });
   };
 
-  // Toggle task completion
   const toggleTaskCompletion = (id) => {
-    setTasks(
-      tasks.map((task) => (task.id === id ? { ...task, is_completed: !task.is_completed } : task))
-    );
+    dispatch({ type: ACTIONS.TOGGLE_COMPLETION, payload: id });
   };
 
-  // Get today's tasks
+  const setFilters = (newFilters) => {
+    dispatch({ type: ACTIONS.UPDATE_FILTERS, payload: newFilters });
+  };
+
+  const resetFilters = () => {
+    dispatch({ type: ACTIONS.RESET_FILTERS });
+  };
+
+  // Derived values
   const getTodaysTasks = () => {
     const today = new Date().toDateString();
     return tasks.filter(
@@ -59,7 +119,6 @@ export function TaskProvider({ children }) {
     );
   };
 
-  // Calculate completion rate
   const getCompletionRate = () => {
     if (tasks.length === 0) return 0;
     const completed = tasks.filter((task) => task.is_completed).length;
@@ -94,6 +153,7 @@ export function TaskProvider({ children }) {
         filters,
         setFilters,
         filteredTasks,
+        resetFilters,
       }}
     >
       {children}
