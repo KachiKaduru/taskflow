@@ -1,5 +1,4 @@
 import { DM_Sans } from "next/font/google";
-import { TaskProvider } from "./_contexts/TaskContent";
 import "./_styles/globals.css";
 
 const dmSans = DM_Sans({
@@ -19,9 +18,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${dmSans.className} antialiased`}>
-        <TaskProvider>{children}</TaskProvider>
-      </body>
+      <body className={`${dmSans.className} antialiased`}>{children}</body>
     </html>
   );
 }
