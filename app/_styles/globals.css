@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+* {
+  outline: none;
+}
+
 /* Custom Calendar Styles */
 .react-calendar {
   width: 100%;

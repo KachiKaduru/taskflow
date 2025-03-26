@@ -5,6 +5,12 @@ export const TaskContext = createContext();
 
 export function TaskProvider({ children }) {
   const [tasks, setTasks] = useState([]);
+  const [filters, setFilters] = useState({
+    date: "",
+    month: "",
+    priority: false,
+    completed: "all", // 'all', 'completed', 'incomplete'
+  });
 
   // Add new task
   const addTask = (task) => {
@@ -60,6 +66,22 @@ export function TaskProvider({ children }) {
     return Math.round((completed / tasks.length) * 100);
   };
 
+  const filteredTasks = tasks
+    .filter((task) => {
+      const taskDate = new Date(task.due_date);
+      const matchesDate =
+        !filters.date || taskDate.toDateString() === new Date(filters.date).toDateString();
+      const matchesMonth = !filters.month || taskDate.getMonth() === parseInt(filters.month);
+      const matchesPriority = !filters.priority || task.isPriority;
+      const matchesCompletion =
+        filters.completed === "all" ||
+        (filters.completed === "completed" && task.is_completed) ||
+        (filters.completed === "incomplete" && !task.is_completed);
+
+      return matchesDate && matchesMonth && matchesPriority && matchesCompletion;
+    })
+    .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+
   return (
     <TaskContext.Provider
       value={{
@@ -69,6 +91,9 @@ export function TaskProvider({ children }) {
         toggleTaskCompletion,
         getTodaysTasks,
         getCompletionRate,
+        filters,
+        setFilters,
+        filteredTasks,
       }}
     >
       {children}

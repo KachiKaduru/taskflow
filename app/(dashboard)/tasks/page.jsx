@@ -7,15 +7,20 @@ import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
   ChevronDownIcon,
-  PlusIcon,
 } from "@heroicons/react/24/outline";
 import TaskCard from "@/app/_components/tasks/TaskCard";
-import NewTaskModal from "@/app/_components/tasks/NewTaskModal";
-// import TaskCard from "@/components/TaskCard";
+import AddNewTask from "@/app/_components/ui/AddNewTask";
+import PageHeader from "@/app/_components/ui/PageHeader";
+import TasksFilter from "@/app/_components/tasks/TasksFilter";
+import TasksList from "@/app/_components/tasks/TasksList";
+
+// export const metadata = {
+//   title: "Tasks",
+//   description: "All Tasks",
+// };
 
 export default function TasksPage() {
-  const { tasks, toggleTaskCompletion, addTask } = useTasks();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { tasks, toggleTaskCompletion } = useTasks();
   const [filters, setFilters] = useState({
     date: "",
     month: "",
@@ -57,20 +62,15 @@ export default function TasksPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">All Tasks</h1>
+      <PageHeader title="All Tasks">
+        <AddNewTask />
+      </PageHeader>
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition-colors"
-        >
-          <PlusIcon className="h-5 w-5" />
-          <span>New Task</span>
-        </button>
-      </div>
+      <TasksFilter />
 
+      <TasksList />
       {/* Filter Bar */}
-      <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+      {/* <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
         <div className="flex flex-wrap gap-4 items-center">
           <div className="relative flex-1 min-w-[200px]">
             <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
@@ -141,10 +141,10 @@ export default function TasksPage() {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Task List */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+      {/* <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
         {filteredTasks.length > 0 ? (
           <div className="divide-y divide-gray-100">
             {filteredTasks.map((task) => (
@@ -157,13 +157,7 @@ export default function TasksPage() {
             <p>No tasks match your filters</p>
           </div>
         )}
-      </div>
-
-      <NewTaskModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAddTask={addTask}
-      />
+      </div> */}
     </div>
   );
 }

@@ -8,8 +8,12 @@ const dmSans = DM_Sans({
 });
 
 export const metadata = {
-  title: "Taskflow",
-  description: "Plan your activities",
+  title: {
+    template: "%s | TaskFlow",
+    default: "Welcome | TaskFlow",
+  },
+  description:
+    "A task management app that lets users organize, track, and prioritize their activities",
 };
 
 export default function RootLayout({ children }) {

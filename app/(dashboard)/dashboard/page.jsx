@@ -1,16 +1,19 @@
 import AddNewTask from "@/app/_components/ui/AddNewTask";
 import StatCards from "@/app/_components/dashboard/StatCards";
 import TodaysTaskList from "@/app/_components/dashboard/TodaysTaskList";
+import PageHeader from "@/app/_components/ui/PageHeader";
+
+export const metadata = {
+  title: "Dashboard",
+  description: "Tasks Overview",
+};
 
 export default function DashboardPage() {
   return (
     <section className="space-y-8">
-      {/* Header */}
-      <header className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
-
+      <PageHeader title="Dashboard">
         <AddNewTask />
-      </header>
+      </PageHeader>
 
       <StatCards />
 
