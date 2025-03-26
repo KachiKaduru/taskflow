@@ -1,6 +1,6 @@
 import { DM_Sans } from "next/font/google";
-import "./_styles/globals.css";
 import { TaskProvider } from "./_contexts/TaskContent";
+import "./_styles/globals.css";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
