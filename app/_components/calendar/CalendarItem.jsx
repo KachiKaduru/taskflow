@@ -8,7 +8,7 @@ export default function CalendarItem() {
   const { view, date, setDate } = useCalendar();
 
   return (
-    <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+    <div className="lg:col-span-1 bg-white rounded-xl shadow-sm p-4 border border-gray-100">
       <Calendar
         onChange={setDate}
         value={date}

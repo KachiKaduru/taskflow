@@ -2,6 +2,7 @@ import PageHeader from "@/app/_components/ui/PageHeader";
 import NotificationSettings from "@/app/_components/settings/NotificationSettings";
 import PasswordSettings from "@/app/_components/settings/PasswordSettings";
 import AdvancedSettings from "@/app/_components/settings/AdvancedSettings";
+import DangerSection from "@/app/_components/settings/DangerSection";
 
 export const metadata = {
   title: "Settings",
@@ -20,6 +21,8 @@ export default function SettingsPage() {
           </div>
 
           <AdvancedSettings />
+
+          <DangerSection />
         </div>
       </div>
     </section>
