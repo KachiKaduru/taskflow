@@ -23,12 +23,12 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="row-start-2 row-end-3 sm:row-start-1 sm:row-end-1 w-full sm:w-64 bg-white border-r border-gray-200 flex flex-col">
+    <div className="row-start-2 row-end-3 sm:row-start-1 sm:row-end-1 w-full sm:w-60 bg-white border-r border-gray-200 flex flex-col">
       <div className="p-6 hidden sm:block">
         <h1 className="text-2xl font-bold text-blue-600">TaskFlow</h1>
       </div>
 
-      <nav className="flex-1 px-4 space-y-1 flex justify-between sm:justify-normal sm:flex-col">
+      <nav className="flex-1 px-1 space-y-1 flex justify-between sm:justify-normal sm:flex-col">
         {sidebarMenu.map((item) => (
           <Link
             key={item.name}

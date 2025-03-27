@@ -7,7 +7,7 @@ export const metadata = {
   title: "Dashboard",
 };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
   return (
     <section className="space-y-8">
       <PageHeader title="Dashboard">
