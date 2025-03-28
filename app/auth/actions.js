@@ -4,10 +4,9 @@ import { createClient } from "@/app/_lib/supabase/client";
 const supabase = createClient();
 
 // Email + Password Login
-export async function signInWithEmail(formData) {
-  //   const supabase = createClient();
-  const email = formData.get("email");
-  const password = formData.get("password");
+
+export async function signInWithEmail({ email, password }) {
+  // const supabase = createClient();
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -21,7 +20,25 @@ export async function signInWithEmail(formData) {
   return { success: true };
 }
 
+// export async function signInWithEmail(formData) {
+//   //   const supabase = createClient();
+//   const email = formData.get("email");
+//   const password = formData.get("password");
+
+//   const { error } = await supabase.auth.signInWithPassword({
+//     email,
+//     password,
+//   });
+
+//   if (error) {
+//     return { error: error.message };
+//   }
+
+//   return { success: true };
+// }
+
 // Email + Password Signup
+
 export async function signUpWithEmail(formData) {
   //   const supabase = createClient();
   const email = formData.get("email");
@@ -43,21 +60,45 @@ export async function signUpWithEmail(formData) {
 }
 
 // Google Login
+// export async function signInWithGoogle() {
+//   //   const supabase = createClient();
+
+//   const { data, error } = await supabase.auth.signInWithOAuth({
+//     provider: "google",
+//     options: {
+//       redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+//     },
+//   });
+
+//   if (error) {
+//     return { error: error.message };
+//   }
+
+//   return { url: data.url }; // This contains the OAuth URL
+// }
+
 export async function signInWithGoogle() {
-  //   const supabase = createClient();
+  // Create client without cookie handling for OAuth
+  const supabase = createClient();
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-    },
-  });
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    });
 
-  if (error) {
+    if (error) throw error;
+    return { url: data.url };
+  } catch (error) {
+    console.error("Google OAuth error:", error);
     return { error: error.message };
   }
-
-  return { url: data.url }; // This contains the OAuth URL
 }
 
 // Logout
