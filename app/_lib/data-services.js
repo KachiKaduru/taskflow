@@ -1,17 +1,18 @@
-export const useTodayTaskData = ({ tasks = [] }) => {
-  const today = new Date().toDateString();
+import { supabase } from "./supabase";
 
-  // Filter and sort tasks
-  const todaysTasks = tasks
-    .filter((task) => task.due_date && new Date(task.due_date).toDateString() === today)
-    .sort((a, b) => {
-      if (a.is_completed !== b.is_completed) return a.is_completed ? 1 : -1;
-      if (a.isPriority !== b.isPriority) return b.isPriority ? 1 : -1;
-      return new Date(a.due_date) - new Date(b.due_date);
-    });
+export async function getUserEmail(email) {
+  const { data, error } = await supabase.from("users").select("*").eq("email", email).single();
 
-  const completedTasks = tasks.filter((task) => task.is_completed).length;
-  const completionRate = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
+  return data;
+}
 
-  return { todaysTasks, completedTasks, completionRate };
-};
+export async function createUser(newUser) {
+  const { data, error } = await supabase.from("users").insert([newUser]).select();
+
+  if (error) {
+    console.error(error);
+    throw new Error("User could not be created");
+  }
+
+  return data;
+}
