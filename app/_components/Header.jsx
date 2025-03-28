@@ -3,7 +3,7 @@ import { auth } from "../_lib/auth";
 
 export default async function Header() {
   const session = await auth();
-  console.log(session);
+  // console.log(session);
 
   return (
     <header className="bg-white border-b border-gray-200">

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { GoogleIcon } from "./_icons/icons";
 import GoogleSignInButton from "./ui/GoogleSignInButton";
 import Link from "next/link";
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
+import AuthForm from "./AuthForm";
 
 export default function LoginForm() {
   const [isEmailLogin, setIsEmailLogin] = useState(false);
@@ -26,35 +26,7 @@ export default function LoginForm() {
 
             {/* Email/Password Form */}
             {isEmailLogin ? (
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input
-                    type="email"
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                  <input
-                    type="password"
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    required
-                    minLength={6}
-                  />
-                </div>
-
-                <div className="flex gap-2 pt-2">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg shadow-sm transition-colors disabled:opacity-50"
-                  >
-                    Sign In
-                  </button>
-                </div>
-              </form>
+              <AuthForm />
             ) : (
               <button
                 onClick={() => setIsEmailLogin(true)}
@@ -66,7 +38,7 @@ export default function LoginForm() {
             )}
           </div>
 
-          <p>
+          <p className="text-sm">
             Don't have an account?{" "}
             <Link href="/signup" className="text-blue-700 underline">
               Sign Up Here.{" "}

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import FormInput from "./form/FormInput";
 import FormLabel from "./form/FormLabel";
 
@@ -16,7 +17,7 @@ export default function AuthForm({ formType = "loginForm" }) {
 
   if (formType === "signupForm")
     return (
-      <form action="">
+      <form action="" className="space-y-2">
         {signupForm.map((field) => (
           <fieldset key={field.label}>
             <FormLabel>{field.label}</FormLabel>
