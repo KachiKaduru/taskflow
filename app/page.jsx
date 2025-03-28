@@ -5,6 +5,17 @@ import { CalendarIcon, ArrowsRightLeftIcon, ChartBarIcon } from "@heroicons/reac
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <header>
+        <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="text-2xl font-bold text-blue-600">TaskFlow</div>
+          <Link
+            href="/login"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full shadow-md transition-all"
+          >
+            Get Started
+          </Link>
+        </nav>
+      </header>
       {/* Hero Section */}
       <section className="container mx-auto px-6 py-20 text-center">
         <h1 className="text-5xl font-bold text-gray-800 mb-6 leading-tight">
