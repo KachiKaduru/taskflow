@@ -3,8 +3,9 @@
 import { useTasks } from "@/app/_contexts/TaskContext";
 import { CalendarIcon, ChartBarIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 
-export default function StatCards() {
-  const { tasks, getCompletionRate, getTodaysTasks } = useTasks();
+export default function StatCards({ userTasks }) {
+  const { tasks, getCompletionRate, getTodaysTasks, setTasks } = useTasks();
+
   const todayTasks = getTodaysTasks();
   const rate = getCompletionRate();
 

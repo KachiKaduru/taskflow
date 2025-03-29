@@ -3,6 +3,7 @@ import { createContext, useContext, useReducer } from "react";
 
 // Action types
 const ACTIONS = {
+  SET_TASKS: "SET_TASKS",
   ADD_TASK: "ADD_TASK",
   DELETE_TASK: "DELETE_TASK",
   TOGGLE_COMPLETION: "TOGGLE_COMPLETION",
@@ -19,11 +20,18 @@ const initialState = {
     priority: false,
     completed: "all", // 'all', 'completed', 'incomplete'
   },
+  loading: false,
+  error: null,
 };
 
 // Reducer function
 function taskReducer(state, action) {
   switch (action.type) {
+    case ACTIONS.SET_TASKS:
+      return {
+        ...state,
+        tasks: [...action.payload],
+      };
     case ACTIONS.ADD_TASK:
       return {
         ...state,
@@ -70,6 +78,10 @@ export function TaskProvider({ children }) {
   const { tasks, filters } = state;
 
   // Helper functions
+  const setTasks = (userTasks) => {
+    dispatch({ type: ACTIONS.SET_TASKS, payload: userTasks });
+  };
+
   const addTask = (task) => {
     const tasksToAdd = [
       {
@@ -91,10 +103,6 @@ export function TaskProvider({ children }) {
     }
 
     dispatch({ type: ACTIONS.ADD_TASK, payload: tasksToAdd });
-  };
-
-  const getUserTasks = (tasks) => {
-    dispatch({ type: ACTIONS.ADD_TASK, payload: tasks });
   };
 
   const deleteTask = (id) => {
@@ -145,8 +153,8 @@ export function TaskProvider({ children }) {
     <TaskContext.Provider
       value={{
         tasks,
+        setTasks,
         addTask,
-        getUserTasks,
         deleteTask,
         toggleTaskCompletion,
         getTodaysTasks,

@@ -3,11 +3,6 @@ import Sidebar from "../_components/Sidebar";
 import { CalendarProvider } from "../_contexts/CalendarContext";
 import { TaskProvider } from "../_contexts/TaskContext";
 
-// export const metadata = {
-//   title: "Dashboard",
-//   description: "Tasks Overview",
-// };
-
 export default function DashboardLayout({ children }) {
   return (
     <TaskProvider>

@@ -9,13 +9,15 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
+  const userTasks = await getAllTasks();
+
   return (
     <section className="space-y-8">
       <PageHeader title="Dashboard">
         <AddNewTask />
       </PageHeader>
 
-      <StatCards />
+      <StatCards userTasks={userTasks} />
 
       <TodaysTaskList />
     </section>
