@@ -1,5 +1,6 @@
-import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { auth } from "../_lib/auth";
+import PageHeading from "./ui/PageHeading";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 export default async function Header() {
   const session = await auth();
@@ -12,8 +13,7 @@ export default async function Header() {
           <h1 className="text-2xl font-bold text-blue-600">TaskFlow</h1>
         </div>
 
-        <h2 className="text-xl font-semibold text-gray-800 capitalize">Header</h2>
-        {/* <h2 className="text-xl font-semibold text-gray-800 capitalize">{pathName.substring(1)}</h2> */}
+        <PageHeading />
 
         <div className="flex items-center space-x-4">
           <button className="p-1 rounded-full hover:bg-gray-100">
