@@ -1,7 +1,7 @@
 import Header from "../_components/Header";
 import Sidebar from "../_components/Sidebar";
 import { CalendarProvider } from "../_contexts/CalendarContext";
-import { TaskProvider } from "../_contexts/TaskContent";
+import { TaskProvider } from "../_contexts/TaskContext";
 
 // export const metadata = {
 //   title: "Dashboard",

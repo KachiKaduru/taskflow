@@ -1,11 +1,13 @@
 "use client";
 
-import { useTasks } from "@/app/_contexts/TaskContent";
+import { useTasks } from "@/app/_contexts/TaskContext";
 import { CalendarIcon, CheckIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
 export default function TodaysTaskList() {
   const { getTodaysTasks, toggleTaskCompletion } = useTasks();
   const todaysTasks = getTodaysTasks();
+
+  // console.log(todaysTasks);
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
@@ -22,25 +24,25 @@ export default function TodaysTaskList() {
             <div
               key={task.id}
               className={`p-4 transition-colors ${
-                task.is_completed ? "bg-gray-50" : "hover:bg-gray-50"
+                task.isCompleted ? "bg-gray-50" : "hover:bg-gray-50"
               }`}
             >
               <div className="flex items-start gap-3">
                 <button
                   onClick={() => toggleTaskCompletion(task.id)}
                   className={`mt-1 flex-shrink-0 h-5 w-5 rounded border ${
-                    task.is_completed
+                    task.isCompleted
                       ? "bg-green-500 border-green-500 text-white"
                       : "border-gray-300"
                   }`}
                 >
-                  {task.is_completed && <CheckIcon className="h-4 w-4" />}
+                  {task.isCompleted && <CheckIcon className="h-4 w-4" />}
                 </button>
                 <div className="flex-1">
                   <div className="flex justify-between">
                     <h3
                       className={`font-medium ${
-                        task.is_completed ? "line-through text-gray-400" : "text-gray-800"
+                        task.isCompleted ? "line-through text-gray-400" : "text-gray-800"
                       }`}
                     >
                       {task.title}
@@ -52,7 +54,7 @@ export default function TodaysTaskList() {
                   {task.description && (
                     <p
                       className={`text-sm ${
-                        task.is_completed ? "text-gray-400" : "text-gray-600"
+                        task.isCompleted ? "text-gray-400" : "text-gray-600"
                       } mt-1`}
                     >
                       {task.description}
@@ -60,10 +62,10 @@ export default function TodaysTaskList() {
                   )}
                   <p
                     className={`text-xs ${
-                      task.is_completed ? "text-gray-400" : "text-gray-500"
+                      task.isCompleted ? "text-gray-400" : "text-gray-500"
                     } mt-1`}
                   >
-                    {new Date(task.due_date).toLocaleTimeString([], {
+                    {new Date(task.dueDate).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}

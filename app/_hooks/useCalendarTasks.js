@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useTasks } from "../_contexts/TaskContent";
+import { useTasks } from "../_contexts/TaskContext";
 import { useCalendar } from "../_contexts/CalendarContext";
 
 export function useCalendarTasks() {
@@ -10,7 +10,7 @@ export function useCalendarTasks() {
 
   return useMemo(() => {
     const filteredTasks = tasks.filter((task) => {
-      const taskDate = new Date(task.due_date);
+      const taskDate = new Date(task.dueDate);
       if (view === "day") {
         return taskDate.toDateString() === date.toDateString();
       } else if (view === "week") {
@@ -26,7 +26,7 @@ export function useCalendarTasks() {
       }
     });
 
-    const completedTasks = filteredTasks.filter((task) => task.is_completed).length;
+    const completedTasks = filteredTasks.filter((task) => task.isCompleted).length;
     const completionRate =
       filteredTasks.length > 0 ? Math.round((completedTasks / filteredTasks.length) * 100) : 0;
     const priorityTasks = filteredTasks.filter((task) => task.isPriority).length;
@@ -36,7 +36,9 @@ export function useCalendarTasks() {
       totalTasks: filteredTasks.length,
       completionRate,
       priorityTasks,
-      productivityScore: filteredTasks.length > 0 ? Math.round(filteredTasks.length / 3) : 0,
+      // productivityScore: filteredTasks.length > 0 ? Math.round(filteredTasks.length / 3) : 0,
+      productivityScore:
+        completedTasks.length > 0 ? Math.round(completedTasks.length / filteredTasks.length) : 0,
     };
   }, [tasks, date, view]); // Only recalculate when these change
 }

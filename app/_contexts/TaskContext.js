@@ -40,7 +40,7 @@ function taskReducer(state, action) {
       return {
         ...state,
         tasks: state.tasks.map((task) =>
-          task.id === action.payload ? { ...task, is_completed: !task.is_completed } : task
+          task.id === action.payload ? { ...task, isCompleted: !task.isCompleted } : task
         ),
       };
 
@@ -75,19 +75,19 @@ export function TaskProvider({ children }) {
       {
         ...task,
         id: Date.now(),
-        is_completed: false,
-        created_at: new Date().toISOString(),
+        isCompleted: false,
+        // created_at: new Date().toISOString(),
       },
     ];
 
     if (task.isRecurring && task.recurrenceDays > 1) {
       for (let i = 1; i < task.recurrenceDays; i++) {
-        const date = new Date(task.due_date);
+        const date = new Date(task.dueDate);
         date.setDate(date.getDate() + i);
         tasksToAdd.push({
           ...task,
           id: Date.now() + i,
-          due_date: date.toISOString(),
+          dueDate: date.toISOString(),
         });
       }
     }
@@ -114,14 +114,12 @@ export function TaskProvider({ children }) {
   // Derived values
   const getTodaysTasks = () => {
     const today = new Date().toDateString();
-    return tasks.filter(
-      (task) => task.due_date && new Date(task.due_date).toDateString() === today
-    );
+    return tasks.filter((task) => task.dueDate && new Date(task.dueDate).toDateString() === today);
   };
 
   const getCompletionRate = () => {
     if (tasks.length === 0) return 0;
-    const completed = tasks.filter((task) => task.is_completed).length;
+    const completed = tasks.filter((task) => task.isCompleted).length;
     return Math.round((completed / tasks.length) * 100);
   };
 
@@ -134,12 +132,12 @@ export function TaskProvider({ children }) {
       const matchesPriority = !filters.priority || task.isPriority;
       const matchesCompletion =
         filters.completed === "all" ||
-        (filters.completed === "completed" && task.is_completed) ||
-        (filters.completed === "incomplete" && !task.is_completed);
+        (filters.completed === "completed" && task.isCompleted) ||
+        (filters.completed === "incomplete" && !task.isCompleted);
 
       return matchesDate && matchesMonth && matchesPriority && matchesCompletion;
     })
-    .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
   return (
     <TaskContext.Provider

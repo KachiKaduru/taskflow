@@ -1,13 +1,16 @@
 "use client";
 
-import { PlusIcon } from "@heroicons/react/24/outline";
-import NewTaskModal from "../tasks/NewTaskModal";
 import { useState } from "react";
-import { useTasks } from "@/app/_contexts/TaskContent";
+import Modal from "./Modal";
+import NewTaskModal from "../tasks/NewTaskModal";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 export default function AddNewTask() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { addTask } = useTasks();
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div>
@@ -19,11 +22,9 @@ export default function AddNewTask() {
         <span>New Task</span>
       </button>
 
-      <NewTaskModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAddTask={addTask}
-      />
+      <Modal isOpen={isModalOpen} title="Add new task" onClose={closeModal}>
+        <NewTaskModal onClose={closeModal} />
+      </Modal>
     </div>
   );
 }

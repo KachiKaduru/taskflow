@@ -1,6 +1,6 @@
 "use client";
 
-import { useTasks } from "@/app/_contexts/TaskContent";
+import { useTasks } from "@/app/_contexts/TaskContext";
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function TasksFilter() {
@@ -22,7 +22,7 @@ export default function TasksFilter() {
   ];
 
   return (
-    <section className="bg-white py-3 px-4 border-b border-gray-200 sticky top-0 z-10">
+    <section className="bg-white py-3 px-4 border-b border-gray-200 z-10">
       <h2>Filters</h2>
 
       <div className="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">

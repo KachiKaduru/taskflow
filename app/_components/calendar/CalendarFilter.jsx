@@ -20,31 +20,6 @@ export default function CalendarFilter() {
           {filter}
         </button>
       ))}
-
-      {/* <button
-        onClick={() => setView("day")}
-        className={`px-3 py-1 rounded-lg ${
-          view === "day" ? "bg-blue-100 text-blue-600" : "text-gray-600"
-        }`}
-      >
-        Day
-      </button>
-      <button
-        onClick={() => setView("week")}
-        className={`px-3 py-1 rounded-lg ${
-          view === "week" ? "bg-blue-100 text-blue-600" : "text-gray-600"
-        }`}
-      >
-        Week
-      </button>
-      <button
-        onClick={() => setView("month")}
-        className={`px-3 py-1 rounded-lg ${
-          view === "month" ? "bg-blue-100 text-blue-600" : "text-gray-600"
-        }`}
-      >
-        Month
-      </button> */}
     </div>
   );
 }

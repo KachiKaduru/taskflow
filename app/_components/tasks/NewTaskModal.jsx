@@ -1,9 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import { XMarkIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { useTasks } from "@/app/_contexts/TaskContext";
+import FormLabel from "../form/FormLabel";
 
-export default function NewTaskModal({ isOpen, onClose, onAddTask }) {
-  // Initialize with current time
+export default function NewTaskModal({ onClose }) {
+  const { addTask } = useTasks();
+
   const getCurrentTime = () => {
     const now = new Date();
     return `${now.getHours().toString().padStart(2, "0")}:${now
@@ -12,28 +15,16 @@ export default function NewTaskModal({ isOpen, onClose, onAddTask }) {
       .padStart(2, "0")}`;
   };
 
-  const [formData, setFormData] = useState({
+  const initialState = {
     title: "",
     date: new Date().toISOString().split("T")[0],
     time: getCurrentTime(), // Now uses current time
     isRecurring: false,
     recurrenceDays: 1,
     isPriority: false,
-  });
+  };
 
-  // Reset form when opening
-  useEffect(() => {
-    if (isOpen) {
-      setFormData({
-        title: "",
-        date: new Date().toISOString().split("T")[0],
-        time: getCurrentTime(),
-        isRecurring: false,
-        recurrenceDays: 1,
-        isPriority: false,
-      });
-    }
-  }, [isOpen]);
+  const [formData, setFormData] = useState(initialState);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -46,17 +37,16 @@ export default function NewTaskModal({ isOpen, onClose, onAddTask }) {
       dueDate: `${formData.date}T${formData.time}:00.000Z`,
     };
 
-    onAddTask(newTask);
+    addTask(newTask);
     onClose();
+    setFormData(initialState);
   };
-
-  if (!isOpen) return null;
 
   return (
     <form onSubmit={handleSubmit} className="p-2 space-y-4">
       {/* Title */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Task Title*</label>
+        <FormLabel>Task Title*</FormLabel>
         <input
           type="text"
           value={formData.title}
@@ -70,7 +60,7 @@ export default function NewTaskModal({ isOpen, onClose, onAddTask }) {
       {/* Date & Time */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Date*</label>
+          <FormLabel className="block text-sm font-medium text-gray-700 mb-1">Date*</FormLabel>
           <input
             type="date"
             value={formData.date}
@@ -81,7 +71,7 @@ export default function NewTaskModal({ isOpen, onClose, onAddTask }) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Time*</label>
+          <FormLabel className="block text-sm font-medium text-gray-700 mb-1">Time*</FormLabel>
           <input
             type="time"
             value={formData.time}

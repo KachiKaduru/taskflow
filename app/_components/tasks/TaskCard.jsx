@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useTasks } from "@/app/_contexts/TaskContent";
+import { useTasks } from "@/app/_contexts/TaskContext";
 
 export default function TaskCard({ task }) {
   const { deleteTask } = useTasks();
@@ -19,9 +19,9 @@ export default function TaskCard({ task }) {
           </button>
         </div>
         {task.description && <p className="text-gray-600 mt-2 text-sm">{task.description}</p>}
-        {task.due_date && (
+        {task.dueDate && (
           <div className="mt-3 flex items-center text-sm text-gray-500">
-            <span>Due: {new Date(task.due_date).toLocaleDateString()}</span>
+            <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
           </div>
         )}
       </div>

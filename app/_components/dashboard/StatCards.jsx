@@ -1,6 +1,6 @@
 "use client";
 
-import { useTasks } from "@/app/_contexts/TaskContent";
+import { useTasks } from "@/app/_contexts/TaskContext";
 import { CalendarIcon, ChartBarIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 
 export default function StatCards() {

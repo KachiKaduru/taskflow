@@ -38,7 +38,7 @@ function TasksListItem({ task }) {
       <div className="flex items-start gap-3">
         <div
           className={`mt-1 flex-shrink-0 h-4 w-4 rounded border ${
-            task.is_completed ? "bg-green-500 border-green-500" : "border-gray-300"
+            task.isCompleted ? "bg-green-500 border-green-500" : "border-gray-300"
           }`}
         />
 
@@ -46,7 +46,7 @@ function TasksListItem({ task }) {
           <div className="flex justify-between">
             <h3
               className={`font-medium ${
-                task.is_completed ? "line-through text-gray-400" : "text-gray-800"
+                task.isCompleted ? "line-through text-gray-400" : "text-gray-800"
               }`}
             >
               {task.title}
@@ -55,7 +55,7 @@ function TasksListItem({ task }) {
           </div>
 
           <p className="text-sm text-gray-500">
-            {new Date(task.due_date).toLocaleTimeString([], {
+            {new Date(task.dueDate).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             })}
