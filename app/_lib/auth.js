@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import { createUser, getUserEmail } from "./data-services";
+import { createUser, getUserEmail } from "./actions/userActions";
+// import { createUser, getUserEmail } from "./data-services";
 
 const authConfig = {
   providers: [
@@ -18,11 +19,16 @@ const authConfig = {
         const existingUser = await getUserEmail(user.email);
         if (!existingUser)
           await createUser({ name: user.name, email: user.email, image: user.image });
-
         return true;
       } catch {
         return false;
       }
+    },
+    async session({ session, user }) {
+      const createdUser = await getUserEmail(session.user.email);
+      session.user.id = createdUser.id;
+
+      return session;
     },
   },
   pages: {

@@ -21,10 +21,10 @@ const Spinner = ({ size = "md", color = "gray" }) => {
 
   return (
     <div className="flex items-center justify-center">
-      <div
+      <span
         className={`animate-spin rounded-full ${sizeClasses[size]} ${colorClasses[color]}`}
         style={{ animation: "spin 1s linear infinite" }}
-      ></div>
+      ></span>
     </div>
   );
 };

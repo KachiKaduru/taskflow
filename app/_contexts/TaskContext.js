@@ -75,8 +75,6 @@ export function TaskProvider({ children }) {
       {
         ...task,
         id: Date.now(),
-        isCompleted: false,
-        // created_at: new Date().toISOString(),
       },
     ];
 
@@ -93,6 +91,10 @@ export function TaskProvider({ children }) {
     }
 
     dispatch({ type: ACTIONS.ADD_TASK, payload: tasksToAdd });
+  };
+
+  const getUserTasks = (tasks) => {
+    dispatch({ type: ACTIONS.ADD_TASK, payload: tasks });
   };
 
   const deleteTask = (id) => {
@@ -144,6 +146,7 @@ export function TaskProvider({ children }) {
       value={{
         tasks,
         addTask,
+        getUserTasks,
         deleteTask,
         toggleTaskCompletion,
         getTodaysTasks,
