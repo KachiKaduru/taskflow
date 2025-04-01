@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useReducer, useEffect } from "react";
+import { createContext, useContext, useReducer } from "react";
 
 // Action types
 const ACTIONS = {
@@ -9,8 +9,6 @@ const ACTIONS = {
   TOGGLE_COMPLETION: "TOGGLE_COMPLETION",
   UPDATE_FILTERS: "UPDATE_FILTERS",
   RESET_FILTERS: "RESET_FILTERS",
-  SET_LOADING: "SET_LOADING",
-  SET_ERROR: "SET_ERROR",
 };
 
 // Initial state
@@ -20,7 +18,7 @@ const initialState = {
     date: "",
     month: "",
     priority: false,
-    completed: "all",
+    completed: "all", // 'all', 'completed', 'incomplete'
   },
   loading: false,
   error: null,
@@ -33,19 +31,19 @@ function taskReducer(state, action) {
       return {
         ...state,
         tasks: [...action.payload],
-        loading: false,
-        error: null,
       };
     case ACTIONS.ADD_TASK:
       return {
         ...state,
         tasks: [...state.tasks, ...action.payload],
       };
+
     case ACTIONS.DELETE_TASK:
       return {
         ...state,
         tasks: state.tasks.filter((task) => task.id !== action.payload),
       };
+
     case ACTIONS.TOGGLE_COMPLETION:
       return {
         ...state,
@@ -53,6 +51,7 @@ function taskReducer(state, action) {
           task.id === action.payload ? { ...task, isCompleted: !task.isCompleted } : task
         ),
       };
+
     case ACTIONS.UPDATE_FILTERS:
       return {
         ...state,
@@ -66,17 +65,7 @@ function taskReducer(state, action) {
         ...state,
         filters: initialState.filters,
       };
-    case ACTIONS.SET_LOADING:
-      return {
-        ...state,
-        loading: action.payload,
-      };
-    case ACTIONS.SET_ERROR:
-      return {
-        ...state,
-        error: action.payload,
-        loading: false,
-      };
+
     default:
       return state;
   }
@@ -86,73 +75,42 @@ export const TaskContext = createContext();
 
 export function TaskProvider({ children }) {
   const [state, dispatch] = useReducer(taskReducer, initialState);
-  const { tasks, filters, loading, error } = state;
-
-  // Fetch tasks on initial load
-  // useEffect(() => {
-  //   const fetchTasks = async () => {
-  //     try {
-  //       dispatch({ type: ACTIONS.SET_LOADING, payload: true });
-  //       const response = await fetch("/api/tasks");
-  //       if (!response.ok) throw new Error("Failed to fetch tasks");
-  //       const data = await response.json();
-  //       dispatch({ type: ACTIONS.SET_TASKS, payload: data });
-  //     } catch (err) {
-  //       dispatch({ type: ACTIONS.SET_ERROR, payload: err.message });
-  //     }
-  //   };
-
-  //   fetchTasks();
-  // }, []);
+  const { tasks, filters } = state;
 
   // Helper functions
   const setTasks = (userTasks) => {
     dispatch({ type: ACTIONS.SET_TASKS, payload: userTasks });
   };
 
-  const refreshTasks = async () => {
-    try {
-      dispatch({ type: ACTIONS.SET_LOADING, payload: true });
-      const response = await fetch("/api/tasks");
-      if (!response.ok) throw new Error("Failed to fetch tasks");
-      const data = await response.json();
-      dispatch({ type: ACTIONS.SET_TASKS, payload: data });
-    } catch (err) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: err.message });
+  const addTask = (task) => {
+    const tasksToAdd = [
+      {
+        ...task,
+        id: Date.now(),
+      },
+    ];
+
+    if (task.isRecurring && task.recurrenceDays > 1) {
+      for (let i = 1; i < task.recurrenceDays; i++) {
+        const date = new Date(task.dueDate);
+        date.setDate(date.getDate() + i);
+        tasksToAdd.push({
+          ...task,
+          id: Date.now() + i,
+          dueDate: date.toISOString(),
+        });
+      }
     }
+
+    dispatch({ type: ACTIONS.ADD_TASK, payload: tasksToAdd });
   };
 
-  const addTask = async (task) => {
-    try {
-      dispatch({ type: ACTIONS.SET_LOADING, payload: true });
-      // Here you would typically call your API to add the task to Supabase
-      // Then refresh the task list
-      // await refreshTasks();
-    } catch (err) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: err.message });
-    }
+  const deleteTask = (id) => {
+    dispatch({ type: ACTIONS.DELETE_TASK, payload: id });
   };
 
-  const deleteTask = async (id) => {
-    try {
-      dispatch({ type: ACTIONS.SET_LOADING, payload: true });
-      // Here you would typically call your API to delete the task from Supabase
-      // Then refresh the task list or optimistically update
-      // await refreshTasks();
-    } catch (err) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: err.message });
-    }
-  };
-
-  const toggleTaskCompletion = async (id) => {
-    try {
-      dispatch({ type: ACTIONS.SET_LOADING, payload: true });
-      // Here you would typically call your API to update completion status
-      // Then refresh the task list or optimistically update
-      // await refreshTasks();
-    } catch (err) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: err.message });
-    }
+  const toggleTaskCompletion = (id) => {
+    dispatch({ type: ACTIONS.TOGGLE_COMPLETION, payload: id });
   };
 
   const setFilters = (newFilters) => {
@@ -163,7 +121,7 @@ export function TaskProvider({ children }) {
     dispatch({ type: ACTIONS.RESET_FILTERS });
   };
 
-  // Memoized derived values
+  // Derived values
   const getTodaysTasks = () => {
     const today = new Date().toDateString();
     return tasks.filter((task) => task.dueDate && new Date(task.dueDate).toDateString() === today);
@@ -195,18 +153,15 @@ export function TaskProvider({ children }) {
     <TaskContext.Provider
       value={{
         tasks,
-        filteredTasks,
-        loading,
-        error,
-        filters,
         setTasks,
         addTask,
         deleteTask,
         toggleTaskCompletion,
-        refreshTasks,
         getTodaysTasks,
         getCompletionRate,
+        filters,
         setFilters,
+        filteredTasks,
         resetFilters,
       }}
     >

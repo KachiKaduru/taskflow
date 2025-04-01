@@ -7,8 +7,6 @@ export default function TodaysTaskList() {
   const { getTodaysTasks, toggleTaskCompletion } = useTasks();
   const todaysTasks = getTodaysTasks();
 
-  // console.log(todaysTasks);
-
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
       <div className="p-6 border-b border-gray-100">
@@ -65,10 +63,11 @@ export default function TodaysTaskList() {
                       task.isCompleted ? "text-gray-400" : "text-gray-500"
                     } mt-1`}
                   >
-                    {new Date(task.dueDate).toLocaleTimeString([], {
+                    {new Date(task.dueDate).toDateString()}
+                    {/* {new Date(task.dueDate).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
-                    })}
+                    })} */}
                   </p>
                 </div>
               </div>

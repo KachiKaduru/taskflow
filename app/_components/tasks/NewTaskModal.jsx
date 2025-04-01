@@ -4,9 +4,8 @@ import { useState } from "react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { useTasks } from "@/app/_contexts/TaskContext";
 import FormLabel from "../form/FormLabel";
-import { createTask, submitTask } from "@/app/_lib/actions/taskActions";
+import { createTask } from "@/app/_lib/actions/taskActions";
 import Spinner from "../ui/Spinner";
-import { useFormStatus } from "react-dom";
 
 export default function NewTaskModal({ onClose }) {
   const { addTask } = useTasks();
@@ -58,7 +57,7 @@ export default function NewTaskModal({ onClose }) {
 
   // action={submitTask}
   return (
-    <form action={submitTask} onSubmit={handleSubmit} className="p-2 space-y-4">
+    <form onSubmit={handleSubmit} className="p-2 space-y-4">
       {/* Title */}
       <div>
         <FormLabel>Title</FormLabel>
