@@ -10,5 +10,6 @@ import { auth } from "./app/_lib/auth";
 export const middleware = auth;
 
 export const config = {
-  matcher: ["/dashboard", "/tasks", "/calendar", "/profile", "/settings"],
+  matcher: ["/dashboardd", "/tasksd", "/calendard", "/profiled", "/settingsd"],
+  // matcher: ["/dashboard", "/tasks", "/calendar", "/profile", "/settings"],
 };
