@@ -106,28 +106,29 @@ export function TaskProvider({ children }) {
   // }, []);
 
   // Helper functions
-  const setTasks = (userTasks) => {
-    dispatch({ type: ACTIONS.SET_TASKS, payload: userTasks });
-  };
+  // const setTasks = (userTasks) => {
+  //   dispatch({ type: ACTIONS.SET_TASKS, payload: userTasks });
+  // };
 
-  const refreshTasks = async () => {
-    try {
-      dispatch({ type: ACTIONS.SET_LOADING, payload: true });
-      const response = await fetch("/api/tasks");
-      if (!response.ok) throw new Error("Failed to fetch tasks");
-      const data = await response.json();
-      dispatch({ type: ACTIONS.SET_TASKS, payload: data });
-    } catch (err) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: err.message });
-    }
-  };
+  // const refreshTasks = async () => {
+  //   try {
+  //     dispatch({ type: ACTIONS.SET_LOADING, payload: true });
+  //     const response = await fetch("/api/tasks");
+  //     if (!response.ok) throw new Error("Failed to fetch tasks");
+  //     const data = await response.json();
+  //     dispatch({ type: ACTIONS.SET_TASKS, payload: data });
+  //   } catch (err) {
+  //     dispatch({ type: ACTIONS.SET_ERROR, payload: err.message });
+  //   }
+  // };
 
-  const addTask = async (task) => {
+  const addTask = (task) => {
     try {
-      dispatch({ type: ACTIONS.SET_LOADING, payload: true });
+      // dispatch({ type: ACTIONS.SET_LOADING, payload: true });
       // Here you would typically call your API to add the task to Supabase
       // Then refresh the task list
       // await refreshTasks();
+      dispatch({ type: ACTIONS.ADD_TASKS, payload: task });
     } catch (err) {
       dispatch({ type: ACTIONS.SET_ERROR, payload: err.message });
     }
@@ -199,11 +200,11 @@ export function TaskProvider({ children }) {
         loading,
         error,
         filters,
-        setTasks,
+        // setTasks,
         addTask,
         deleteTask,
         toggleTaskCompletion,
-        refreshTasks,
+        // refreshTasks,
         getTodaysTasks,
         getCompletionRate,
         setFilters,

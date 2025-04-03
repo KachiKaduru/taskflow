@@ -45,7 +45,7 @@ export default function NewTaskModal({ onClose }) {
       };
 
       addTask(newTask);
-      await createTask(newTask);
+      // await createTask(newTask);
     } catch (e) {
       console.error(e);
     } finally {
