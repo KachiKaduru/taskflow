@@ -2,9 +2,9 @@
 
 import { useCalendar } from "@/app/_contexts/CalendarContext";
 import { FunnelIcon } from "@heroicons/react/24/outline";
-import TaskCard from "../tasks/TaskCard";
-import EventCard from "../events/EventCard";
-import AppointmentCard from "../appointments/AppointmentCard";
+import TaskCard from "../_tasks/TaskCard";
+import EventCard from "../_events/EventCard";
+import AppointmentCard from "../_appointments/AppointmentCard";
 
 export default function ScheduleList() {
   const { getScheduleItems } = useCalendar();

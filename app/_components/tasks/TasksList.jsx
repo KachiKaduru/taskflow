@@ -2,7 +2,7 @@
 
 import { useTasks } from "@/app/_contexts/TaskContext";
 import { FunnelIcon } from "@heroicons/react/24/outline";
-import TaskCard from "./TaskCard";
+import TaskCard from "../_tasks/TaskCard";
 
 export default function TasksList() {
   const { filteredTasks, toggleTaskCompletion } = useTasks();
