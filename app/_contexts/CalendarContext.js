@@ -9,6 +9,8 @@ const ACTIONS = {
   SET_VIEW: "SET_VIEW",
   SET_SCHEDULE_ITEMS: "SET_SCHEDULE_ITEMS",
   RESET: "RESET",
+  UPDATE_FILTERS: "UPDATE_FILTERS",
+  RESET_FILTERS: "RESET_FILTERS",
 };
 
 const initialState = {
@@ -17,6 +19,13 @@ const initialState = {
   scheduleItems: [],
   loading: false,
   error: null,
+  filters: {
+    date: "",
+    month: "",
+    itemType: "all", // 'all', 'task', 'event', 'appointment'
+    priority: false,
+    status: "all", // 'all', 'completed', 'incomplete'
+  },
 };
 
 function calendarReducer(state, action) {
@@ -29,6 +38,10 @@ function calendarReducer(state, action) {
       return { ...state, scheduleItems: action.payload };
     case ACTIONS.RESET:
       return { ...initialState, date: new Date() };
+    case ACTIONS.UPDATE_FILTERS:
+      return { ...state, filters: { ...state.filters, ...action.payload } };
+    case ACTIONS.RESET_FILTERS:
+      return { ...state, filters: initialState.filters };
     default:
       return state;
   }
@@ -56,6 +69,13 @@ export function CalendarProvider({ children }) {
     const setDate = (date) => dispatch({ type: ACTIONS.SET_DATE, payload: date });
     const setView = (view) => dispatch({ type: ACTIONS.SET_VIEW, payload: view });
     const resetCalendar = () => dispatch({ type: ACTIONS.RESET });
+    const setFilters = (newFilters) => {
+      dispatch({ type: ACTIONS.UPDATE_FILTERS, payload: newFilters });
+    };
+
+    const resetFilters = () => {
+      dispatch({ type: ACTIONS.RESET_FILTERS });
+    };
 
     // Filter schedule items by current view
     const getScheduleItems = () => {
@@ -95,6 +115,8 @@ export function CalendarProvider({ children }) {
       setView,
       resetCalendar,
       getScheduleItems,
+      setFilters,
+      resetFilters,
     };
   }, [state.date, state.view, state.scheduleItems]);
 

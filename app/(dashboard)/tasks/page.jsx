@@ -1,7 +1,7 @@
 import PageHeader from "@/app/_components/ui/PageHeader";
-import AddNewTask from "@/app/_components/ui/AddNewTask";
 import TasksFilter from "@/app/_components/tasks/TasksFilter";
 import TasksList from "@/app/_components/tasks/TasksList";
+import CreateForm from "@/app/_components/ui/CreateForm";
 
 export const metadata = {
   title: "Tasks",
@@ -9,14 +9,14 @@ export const metadata = {
 
 export default function TasksPage() {
   return (
-    <div className="space-y-6">
+    <section className="space-y-6">
       <PageHeader title="All Tasks">
-        <AddNewTask />
+        <CreateForm />
       </PageHeader>
 
       <TasksFilter />
 
       <TasksList />
-    </div>
+    </section>
   );
 }
