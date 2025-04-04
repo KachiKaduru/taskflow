@@ -4,12 +4,9 @@ import { useState } from "react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { useTasks } from "@/app/_contexts/TaskContext";
 import FormLabel from "../form/FormLabel";
-import { createTask } from "@/app/_lib/actions/taskActions";
-import Spinner from "../ui/Spinner";
 
 export default function NewTaskModal({ onClose }) {
   const { addTask } = useTasks();
-  const [loading, setLoading] = useState(false);
 
   const getCurrentTime = () => {
     const now = new Date();
@@ -31,28 +28,19 @@ export default function NewTaskModal({ onClose }) {
 
   const [formData, setFormData] = useState(initialState);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
     if (!formData.title.trim()) return;
 
-    setLoading(true);
-    try {
-      const newTask = {
-        ...formData,
-        id: Date.now(),
-        dueDate: `${formData.date}T${formData.time}:00.000Z`,
-      };
+    const newTask = {
+      ...formData,
+      id: Date.now(),
+      dueDate: `${formData.date}T${formData.time}:00.000Z`,
+    };
 
-      addTask(newTask);
-      await createTask(newTask);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-      setFormData(initialState);
-      onClose();
-    }
+    addTask(newTask);
+    setFormData(initialState);
+    onClose();
   };
 
   // action={submitTask}
@@ -152,11 +140,9 @@ export default function NewTaskModal({ onClose }) {
       {/* Submit */}
       <div className="pt-6">
         <button
-          // type="submit"
+          type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg shadow-sm transition-colors font-medium flex justify-center gap-3 disabled:bg-blue-900"
-          disabled={loading}
         >
-          {loading && <Spinner size="sm" />}
           <span>Add Task</span>
         </button>
       </div>
