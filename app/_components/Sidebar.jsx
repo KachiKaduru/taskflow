@@ -10,6 +10,7 @@ import {
   UserIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
+import { QueueListIcon } from "@heroicons/react/24/solid";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -17,6 +18,7 @@ export default function Sidebar() {
   const sidebarMenu = [
     { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
     { name: "Tasks", href: "/tasks", icon: ListBulletIcon },
+    { name: "Schedule", href: "/schedule", icon: QueueListIcon },
     { name: "Calendar", href: "/calendar", icon: CalendarIcon },
     { name: "Profile", href: "/profile", icon: UserIcon },
     { name: "Settings", href: "/settings", icon: Cog6ToothIcon },

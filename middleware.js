@@ -11,5 +11,5 @@ export const middleware = auth;
 
 export const config = {
   // matcher: ["/dashboardd", "/tasksd", "/calendard", "/profiled", "/settingsd"],
-  matcher: ["/dashboard", "/tasks", "/calendar", "/profile", "/settings"],
+  matcher: ["/dashboard", "/schedule", "/tasks", "/calendar", "/profile", "/settings"],
 };

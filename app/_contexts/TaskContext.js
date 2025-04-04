@@ -1,7 +1,7 @@
 "use client";
-import { createContext, useContext, useReducer, useEffect } from "react";
 
-// Action types
+import { createContext, useContext, useReducer, useMemo } from "react";
+
 const ACTIONS = {
   ADD_TASK: "ADD_TASK",
   DELETE_TASK: "DELETE_TASK",
@@ -12,7 +12,6 @@ const ACTIONS = {
   SET_ERROR: "SET_ERROR",
 };
 
-// Initial state
 const initialState = {
   tasks: [],
   filters: {
@@ -25,7 +24,6 @@ const initialState = {
   error: null,
 };
 
-// Reducer function
 function taskReducer(state, action) {
   switch (action.type) {
     case ACTIONS.ADD_TASK:
@@ -48,10 +46,7 @@ function taskReducer(state, action) {
     case ACTIONS.UPDATE_FILTERS:
       return {
         ...state,
-        filters: {
-          ...state.filters,
-          ...action.payload,
-        },
+        filters: { ...state.filters, ...action.payload },
       };
     case ACTIONS.RESET_FILTERS:
       return {
@@ -59,16 +54,9 @@ function taskReducer(state, action) {
         filters: initialState.filters,
       };
     case ACTIONS.SET_LOADING:
-      return {
-        ...state,
-        loading: action.payload,
-      };
+      return { ...state, loading: action.payload };
     case ACTIONS.SET_ERROR:
-      return {
-        ...state,
-        error: action.payload,
-        loading: false,
-      };
+      return { ...state, error: action.payload, loading: false };
     default:
       return state;
   }
@@ -78,83 +66,89 @@ export const TaskContext = createContext();
 
 export function TaskProvider({ children }) {
   const [state, dispatch] = useReducer(taskReducer, initialState);
-  const { tasks, filters, loading, error } = state;
 
-  // Helper functions
-  const addTask = (task) => {
-    dispatch({ type: ACTIONS.ADD_TASK, payload: task });
-  };
+  const value = useMemo(() => {
+    const addTask = (task) => {
+      const taskToAdd = { ...task, id: Date.now() };
+      dispatch({ type: ACTIONS.ADD_TASK, payload: taskToAdd });
 
-  const deleteTask = (id) => {
-    dispatch({ type: ACTIONS.DELETE_TASK, payload: id });
-  };
+      if (task.isRecurring && task.recurrenceDays > 1) {
+        for (let i = 1; i < task.recurrenceDays; i++) {
+          const date = new Date(task.dueDate);
+          date.setDate(date.getDate() + i);
+          dispatch({
+            type: ACTIONS.ADD_TASK,
+            payload: {
+              ...task,
+              id: Date.now() + i,
+              dueDate: date.toISOString(),
+            },
+          });
+        }
+      }
+    };
 
-  const toggleTaskCompletion = (id) => {
-    dispatch({ type: ACTIONS.TOGGLE_COMPLETION, payload: id });
-  };
+    const deleteTask = (id) => dispatch({ type: ACTIONS.DELETE_TASK, payload: id });
+    const toggleTaskCompletion = (id) => dispatch({ type: ACTIONS.TOGGLE_COMPLETION, payload: id });
+    const setFilters = (newFilters) =>
+      dispatch({ type: ACTIONS.UPDATE_FILTERS, payload: newFilters });
+    const resetFilters = () => dispatch({ type: ACTIONS.RESET_FILTERS });
 
-  const setFilters = (newFilters) => {
-    dispatch({ type: ACTIONS.UPDATE_FILTERS, payload: newFilters });
-  };
+    // Derived values
+    const getTodaysTasks = () => {
+      const today = new Date().toDateString();
+      return state.tasks.filter(
+        (task) => task.dueDate && new Date(task.dueDate).toDateString() === today
+      );
+    };
 
-  const resetFilters = () => {
-    dispatch({ type: ACTIONS.RESET_FILTERS });
-  };
+    const getCompletionRate = () => {
+      if (state.tasks.length === 0) return 0;
+      const completed = state.tasks.filter((task) => task.isCompleted).length;
+      return Math.round((completed / state.tasks.length) * 100);
+    };
 
-  // Memoized derived values
-  const getTodaysTasks = () => {
-    const today = new Date().toDateString();
-    return tasks.filter((task) => task.dueDate && new Date(task.dueDate).toDateString() === today);
-  };
+    const filteredTasks = state.tasks
+      .filter((task) => {
+        const taskDate = new Date(task.dueDate);
+        const matchesDate =
+          !state.filters.date ||
+          taskDate.toDateString() === new Date(state.filters.date).toDateString();
+        const matchesMonth =
+          !state.filters.month || taskDate.getMonth() === parseInt(state.filters.month);
+        const matchesPriority = !state.filters.priority || task.isPriority;
+        const matchesCompletion =
+          state.filters.completed === "all" ||
+          (state.filters.completed === "completed" && task.isCompleted) ||
+          (state.filters.completed === "incomplete" && !task.isCompleted);
 
-  const getCompletionRate = () => {
-    if (tasks.length === 0) return 0;
-    const completed = tasks.filter((task) => task.isCompleted).length;
-    return Math.round((completed / tasks.length) * 100);
-  };
+        return matchesDate && matchesMonth && matchesPriority && matchesCompletion;
+      })
+      .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
-  const filteredTasks = tasks
-    .filter((task) => {
-      const taskDate = new Date(task.due_date);
-      const matchesDate =
-        !filters.date || taskDate.toDateString() === new Date(filters.date).toDateString();
-      const matchesMonth = !filters.month || taskDate.getMonth() === parseInt(filters.month);
-      const matchesPriority = !filters.priority || task.isPriority;
-      const matchesCompletion =
-        filters.completed === "all" ||
-        (filters.completed === "completed" && task.isCompleted) ||
-        (filters.completed === "incomplete" && !task.isCompleted);
+    return {
+      tasks: state.tasks,
+      filteredTasks,
+      loading: state.loading,
+      error: state.error,
+      filters: state.filters,
+      addTask,
+      deleteTask,
+      toggleTaskCompletion,
+      getTodaysTasks,
+      getCompletionRate,
+      setFilters,
+      resetFilters,
+    };
+  }, [state.tasks, state.filters, state.loading, state.error]);
 
-      return matchesDate && matchesMonth && matchesPriority && matchesCompletion;
-    })
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-
-  return (
-    <TaskContext.Provider
-      value={{
-        tasks,
-        filteredTasks,
-        loading,
-        error,
-        filters,
-        addTask,
-        deleteTask,
-        toggleTaskCompletion,
-        getTodaysTasks,
-        getCompletionRate,
-        setFilters,
-        resetFilters,
-      }}
-    >
-      {children}
-    </TaskContext.Provider>
-  );
+  return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 }
 
 export function useTasks() {
   const context = useContext(TaskContext);
   if (context === undefined) {
-    throw new Error("useTasks must be used within the TaskProvider");
+    throw new Error("useTasks must be used within a TaskProvider");
   }
   return context;
 }
