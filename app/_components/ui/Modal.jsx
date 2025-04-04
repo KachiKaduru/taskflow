@@ -12,7 +12,7 @@ export default function Modal({ children, isOpen, onClose, title = "" }) {
     >
       <div
         className="relative flex flex-col gap-1
-       bg-white rounded-xl shadow-xl w-full max-w-md max-h-[450px] overflow-y-auto  p-4"
+       bg-white rounded-xl shadow-xl w-full max-w-md max-h-[450px] overflow-y-auto p-4"
         onClick={(e) => e.stopPropagation()}
       >
         <header className="flex justify-between border-b pb-4">
@@ -23,7 +23,7 @@ export default function Modal({ children, isOpen, onClose, title = "" }) {
           </button>
         </header>
 
-        <section className="bg-white">{children}</section>
+        <main className="bg-white">{children}</main>
       </div>
     </section>
   );

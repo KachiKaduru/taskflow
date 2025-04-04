@@ -5,7 +5,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { useTasks } from "@/app/_contexts/TaskContext";
 import FormLabel from "../form/FormLabel";
 
-export default function NewTaskModal({ onClose }) {
+export default function CreateTask({ onClose }) {
   const { addTask } = useTasks();
 
   const getCurrentTime = () => {
@@ -149,3 +149,94 @@ export default function NewTaskModal({ onClose }) {
     </form>
   );
 }
+
+//OTHER ONE
+
+// "use client";
+
+// import { useTasks } from "@/app/_contexts/TaskContext";
+// import FormLabel from "../form/FormLabel";
+
+// export default function CreateTask({ onClose }) {
+//   const { addTask } = useTasks();
+
+//   const handleSubmit = async (formData) => {
+//     const newTask = {
+//       id: Date.now(),
+//       title: formData.get("title"),
+//       time: formData.get("time"),
+//       date: formData.get("date"),
+//       dueDate: `${formData.get("date")}T${formData.get("time")}:00.000Z`,
+//       isRecurring: formData.get("isRecurring") === "on",
+//       recurrenceDays: parseInt(formData.get("recurrenceDays")) || 1,
+//       isPriority: formData.get("isPriority") === "on",
+//       isCompleted: false,
+//     };
+//     console.log(newTask);
+
+//     try {
+//       await addTask(newTask);
+//       onClose();
+//     } catch (e) {
+//       console.log(e);
+//     }
+//   };
+
+//   return (
+//     <form action={handleSubmit} className="p-2 space-y-4">
+//       {/* Title */}
+//       <div>
+//         <FormLabel>Title</FormLabel>
+//         <input name="title" className="w-full p-2 border rounded-lg" required autoFocus />
+//       </div>
+
+//       {/* Date & Time */}
+//       <div className="grid grid-cols-2 gap-4">
+//         <div>
+//           <FormLabel>Due Date</FormLabel>
+//           <input
+//             type="date"
+//             name="date"
+//             defaultValue={new Date().toISOString().split("T")[0]}
+//             min={new Date().toISOString().split("T")[0]}
+//             className="w-full p-2 border rounded-lg"
+//             required
+//           />
+//         </div>
+//         <div>
+//           <FormLabel>Time Due</FormLabel>
+//           <input type="time" name="time" className="w-full p-2 border rounded-lg" required />
+//         </div>
+//       </div>
+
+//       {/* Recurring */}
+//       <div className="flex items-center gap-2">
+//         <input type="checkbox" id="recurring" name="isRecurring" className="h-4 w-4" />
+//         <label htmlFor="recurring">Recurring Task</label>
+//       </div>
+
+//       {/* Recurrence Days */}
+//       <div className="pl-6">
+//         <FormLabel>Repeat for (days)</FormLabel>
+//         <input
+//           type="number"
+//           name="recurrenceDays"
+//           min="1"
+//           max="30"
+//           defaultValue="1"
+//           className="w-full p-2 border rounded-lg"
+//         />
+//       </div>
+
+//       {/* Priority */}
+//       <div className="flex items-center gap-2">
+//         <input type="checkbox" id="priority" name="isPriority" className="h-4 w-4" />
+//         <label htmlFor="priority">Priority Task</label>
+//       </div>
+
+//       <button type="submit" className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg mt-4">
+//         Add Task
+//       </button>
+//     </form>
+//   );
+// }

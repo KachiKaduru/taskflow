@@ -3,7 +3,7 @@
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Modal from "./Modal";
-import NewTaskModal from "../tasks/NewTaskModal";
+import NewTaskModal from "../modals/CreateTask";
 
 export default function EditProfile({ user }) {
   const [isOpen, setIsOpen] = useState(false);

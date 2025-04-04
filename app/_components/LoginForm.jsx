@@ -26,7 +26,7 @@ export default function LoginForm() {
 
             {/* Email/Password Form */}
             {isEmailLogin ? (
-              <AuthForm />
+              <AuthForm formType="loginForm" />
             ) : (
               <button
                 onClick={() => setIsEmailLogin(true)}
