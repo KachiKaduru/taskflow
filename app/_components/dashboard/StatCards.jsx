@@ -1,17 +1,9 @@
 "use client";
-import { useTasks, useEvents, useAppointments } from "@/app/_contexts";
+import { useAppointments } from "@/app/_contexts/AppointmentContext";
+import { useEvents } from "@/app/_contexts/EventContext";
+import { useTasks } from "@/app/_contexts/TaskContext";
 import { CalendarIcon, ClockIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 import { ExclamationTriangleIcon, UserGroupIcon } from "@heroicons/react/24/solid";
-// import {
-//   CalendarIcon,
-//   ChartBarIcon,
-//   ListBulletIcon,
-//   ClockIcon,
-//   UserGroupIcon,
-//   LightningBoltIcon,
-//   ArrowTrendingUpIcon,
-//   CheckCircleIcon,
-// } from "@heroicons/react/24/outline";
 
 export default function StatCards() {
   const { tasks, getCompletionRate, getTodaysTasks } = useTasks();

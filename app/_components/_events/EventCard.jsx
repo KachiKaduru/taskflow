@@ -1,3 +1,5 @@
+import { CalendarIcon } from "@heroicons/react/24/outline";
+
 export default function EventCard({ event }) {
   return (
     <div className="p-4 hover:bg-gray-50">

@@ -1,3 +1,5 @@
+import { UserIcon } from "@heroicons/react/24/outline";
+
 export default function AppointmentCard({ appointment }) {
   return (
     <div className="p-4 hover:bg-gray-50">

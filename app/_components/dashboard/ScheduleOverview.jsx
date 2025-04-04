@@ -1,5 +1,8 @@
 "use client";
-import { useTasks, useEvents, useAppointments } from "@/app/_contexts";
+
+import { useAppointments } from "@/app/_contexts/AppointmentContext";
+import { useEvents } from "@/app/_contexts/EventContext";
+import { useTasks } from "@/app/_contexts/TaskContext";
 import {
   CalendarIcon,
   CheckIcon,

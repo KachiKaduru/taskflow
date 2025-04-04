@@ -18,7 +18,7 @@ const months = [
   "December",
 ];
 
-const itemTypes = [
+const types = [
   { value: "all", label: "All Items" },
   { value: "task", label: "Tasks" },
   { value: "event", label: "Events" },
@@ -95,11 +95,11 @@ export default function ScheduleFilter() {
           <label className="block text-xs font-medium mb-1 text-gray-500">Type</label>
           <div className="relative">
             <select
-              value={filters.itemType || "all"}
-              onChange={(e) => setFilters({ ...filters, itemType: e.target.value })}
+              value={filters.type || "all"}
+              onChange={(e) => setFilters({ ...filters, type: e.target.value })}
               className="pl-2 pr-6 py-1.5 text-xs border border-gray-300 rounded-lg"
             >
-              {itemTypes.map((type) => (
+              {types.map((type) => (
                 <option key={type.value} value={type.value}>
                   {type.label}
                 </option>
@@ -110,7 +110,7 @@ export default function ScheduleFilter() {
         </div>
 
         {/* Priority Filter (Tasks only) */}
-        {(!filters.itemType || filters.itemType === "all" || filters.itemType === "task") && (
+        {(!filters.type || filters.type === "all" || filters.type === "task") && (
           <div className="flex-shrink-0 flex items-end gap-2 h-full pt-5">
             <label className="flex items-center gap-1.5 cursor-pointer">
               <input
@@ -129,7 +129,7 @@ export default function ScheduleFilter() {
         )}
 
         {/* Status Filter (Tasks only) */}
-        {(!filters.itemType || filters.itemType === "all" || filters.itemType === "task") && (
+        {(!filters.type || filters.type === "all" || filters.type === "task") && (
           <div className="flex-shrink-0">
             <div className="relative">
               <select
@@ -153,7 +153,7 @@ export default function ScheduleFilter() {
         {/* Reset Button */}
         {(filters.date ||
           filters.month ||
-          filters.itemType !== "all" ||
+          filters.type !== "all" ||
           filters.priority ||
           filters.status !== "all") && (
           <button

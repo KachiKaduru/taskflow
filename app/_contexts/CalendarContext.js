@@ -22,7 +22,7 @@ const initialState = {
   filters: {
     date: "",
     month: "",
-    itemType: "all", // 'all', 'task', 'event', 'appointment'
+    type: "all", // 'all', 'task', 'event', 'appointment'
     priority: false,
     status: "all", // 'all', 'completed', 'incomplete'
   },
@@ -51,6 +51,7 @@ export const CalendarContext = createContext();
 
 export function CalendarProvider({ children }) {
   const [state, dispatch] = useReducer(calendarReducer, initialState);
+  // const { filters, scheduleItems } = state;
   const { tasks } = useTasks();
   const { events } = useEvents();
   const { appointments } = useAppointments();
@@ -69,6 +70,7 @@ export function CalendarProvider({ children }) {
     const setDate = (date) => dispatch({ type: ACTIONS.SET_DATE, payload: date });
     const setView = (view) => dispatch({ type: ACTIONS.SET_VIEW, payload: view });
     const resetCalendar = () => dispatch({ type: ACTIONS.RESET });
+
     const setFilters = (newFilters) => {
       dispatch({ type: ACTIONS.UPDATE_FILTERS, payload: newFilters });
     };
@@ -78,35 +80,50 @@ export function CalendarProvider({ children }) {
     };
 
     // Filter schedule items by current view
-    const getScheduleItems = () => {
-      const currentDate = state.date;
-      const items = state.scheduleItems.filter((item) => {
-        const itemDate = new Date(item.date || item.dueDate || item.startTime);
+    const getFilteredItems = () => {
+      return state.scheduleItems
+        .filter((item) => {
+          // 1. Date Filter
+          if (state.filters.date) {
+            const itemDate = new Date(item.date || item.dueDate || item.startTime);
+            const filterDate = new Date(state.filters.date);
+            if (itemDate.toDateString() !== filterDate.toDateString()) {
+              return false;
+            }
+          }
 
-        if (state.view === "day") {
-          return itemDate.toDateString() === currentDate.toDateString();
-        }
-        if (state.view === "week") {
-          const startOfWeek = new Date(currentDate);
-          startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
-          const endOfWeek = new Date(startOfWeek);
-          endOfWeek.setDate(startOfWeek.getDate() + 6);
-          return itemDate >= startOfWeek && itemDate <= endOfWeek;
-        }
-        if (state.view === "month") {
-          return (
-            itemDate.getMonth() === currentDate.getMonth() &&
-            itemDate.getFullYear() === currentDate.getFullYear()
-          );
-        }
-        return false;
-      });
+          // 2. Month Filter
+          if (state.filters.month !== "") {
+            const itemDate = new Date(item.date || item.dueDate || item.startTime);
+            if (itemDate.getMonth() !== parseInt(state.filters.month)) {
+              return false;
+            }
+          }
 
-      return items.sort((a, b) => {
-        const dateA = new Date(a.date || a.dueDate || a.startTime);
-        const dateB = new Date(b.date || b.dueDate || b.startTime);
-        return dateA - dateB;
-      });
+          // 3. Item Type Filter
+          if (state.filters.type !== "all" && item.type !== state.filters.type) {
+            return false;
+          }
+
+          // 4. Priority Filter (tasks only)
+          if (state.filters.priority && item.type === "task" && !item.priority) {
+            return false;
+          }
+
+          // 5. Status Filter (tasks only)
+          if (state.filters.status !== "all" && item.type === "task") {
+            if (state.filters.status === "completed" && !item.completed) return false;
+            if (state.filters.status === "incomplete" && item.completed) return false;
+          }
+
+          return true; // Item passed all filters
+        })
+        .sort((a, b) => {
+          // Sorting by date (same as your existing sort)
+          const dateA = new Date(a.date || a.dueDate || a.startTime);
+          const dateB = new Date(b.date || b.dueDate || b.startTime);
+          return dateA - dateB;
+        });
     };
 
     return {
@@ -114,11 +131,12 @@ export function CalendarProvider({ children }) {
       setDate,
       setView,
       resetCalendar,
-      getScheduleItems,
+      getFilteredItems,
       setFilters,
       resetFilters,
     };
-  }, [state.date, state.view, state.scheduleItems]);
+  }, [state]);
+  // }, [state.date, state.view, state.scheduleItems, state.filters, state.loading, state.error]);
 
   return <CalendarContext.Provider value={value}>{children}</CalendarContext.Provider>;
 }

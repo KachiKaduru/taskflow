@@ -7,8 +7,9 @@ import EventCard from "../_events/EventCard";
 import AppointmentCard from "../_appointments/AppointmentCard";
 
 export default function ScheduleList() {
-  const { getScheduleItems } = useCalendar();
-  const items = getScheduleItems();
+  const { scheduleItems, getFilteredItems } = useCalendar();
+  const items = getFilteredItems();
+  console.log(("filtered Items:", items), scheduleItems);
 
   return (
     <section className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">

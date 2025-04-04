@@ -1,5 +1,6 @@
 "use client";
-import { useEvents, useAppointments } from "@/app/_contexts";
+import { useAppointments } from "@/app/_contexts/AppointmentContext";
+import { useEvents } from "@/app/_contexts/EventContext";
 import { CalendarIcon, VideoCameraIcon, UserIcon } from "@heroicons/react/24/outline";
 
 export default function UpcomingEvents() {
