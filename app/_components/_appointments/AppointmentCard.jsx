@@ -1,3 +1,4 @@
+import { formatTimeString } from "@/app/_lib/helpers";
 import { UserIcon } from "@heroicons/react/24/outline";
 
 export default function AppointmentCard({ appointment }) {
@@ -8,9 +9,9 @@ export default function AppointmentCard({ appointment }) {
           <UserIcon className="h-5 w-5 text-teal-600" />
         </div>
         <div>
-          <h3 className="font-medium">With: {appointment.withPerson}</h3>
+          <h3 className="font-medium"> {appointment.title}</h3>
           <p className="text-sm text-gray-500">
-            {appointment.title} • {new Date(appointment.date).toLocaleTimeString()}
+            With: {appointment.withPerson} • {formatTimeString(appointment.date)}
           </p>
         </div>
       </div>

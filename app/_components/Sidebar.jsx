@@ -17,7 +17,7 @@ export default function Sidebar() {
 
   const sidebarMenu = [
     { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
-    { name: "Tasks", href: "/tasks", icon: ListBulletIcon },
+    // { name: "Tasks", href: "/tasks", icon: ListBulletIcon },
     { name: "Schedule", href: "/schedule", icon: QueueListIcon },
     { name: "Calendar", href: "/calendar", icon: CalendarIcon },
     { name: "Profile", href: "/profile", icon: UserIcon },

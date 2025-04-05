@@ -106,14 +106,14 @@ export function CalendarProvider({ children }) {
           }
 
           // 4. Priority Filter (tasks only)
-          if (state.filters.priority && item.type === "task" && !item.priority) {
+          if (state.filters.priority && item.type === "task" && !item.isPriority) {
             return false;
           }
 
           // 5. Status Filter (tasks only)
           if (state.filters.status !== "all" && item.type === "task") {
-            if (state.filters.status === "completed" && !item.completed) return false;
-            if (state.filters.status === "incomplete" && item.completed) return false;
+            if (state.filters.status === "completed" && !item.isCompleted) return false;
+            if (state.filters.status === "incomplete" && item.isCompleted) return false;
           }
 
           return true; // Item passed all filters

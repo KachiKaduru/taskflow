@@ -1,7 +1,7 @@
 "use client";
 
 import { useCalendar } from "@/app/_contexts/CalendarContext";
-import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const months = [
   "January",
@@ -30,7 +30,7 @@ export default function ScheduleFilter() {
 
   return (
     <section className="bg-white py-3 px-4 border-b border-gray-200 z-10">
-      <h2 className="text-sm font-medium text-gray-700 mb-3">Schedule Filters</h2>
+      <h2 className="text-sm font-medium text-gray-700 mb-4">Filters</h2>
 
       <div className="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
         {/* Date Filter */}
@@ -86,7 +86,6 @@ export default function ScheduleFilter() {
                 </option>
               ))}
             </select>
-            <ChevronDownIcon className="h-3 w-3 absolute right-2 top-3 text-gray-400 pointer-events-none" />
           </div>
         </div>
 
@@ -105,9 +104,31 @@ export default function ScheduleFilter() {
                 </option>
               ))}
             </select>
-            <ChevronDownIcon className="h-2.5 w-2.5 absolute right-2 top-2.5 text-gray-400 pointer-events-none" />
           </div>
         </div>
+
+        {/* Status Filter (Tasks only) */}
+        {(!filters.type || filters.type === "all" || filters.type === "task") && (
+          <div className="flex-shrink-0">
+            <label className="block text-xs font-medium mb-1 text-gray-500">Status</label>
+
+            <div className="relative">
+              <select
+                value={filters.status || "all"}
+                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                className={`pl-2 pr-6 py-1.5 text-xs border rounded-lg ${
+                  filters.status !== "all"
+                    ? "border-blue-300 text-blue-600"
+                    : "border-gray-300 text-gray-500"
+                }`}
+              >
+                <option value="all">All Statuses</option>
+                <option value="completed">Completed</option>
+                <option value="incomplete">Incomplete</option>
+              </select>
+            </div>
+          </div>
+        )}
 
         {/* Priority Filter (Tasks only) */}
         {(!filters.type || filters.type === "all" || filters.type === "task") && (
@@ -125,28 +146,6 @@ export default function ScheduleFilter() {
                 Priority
               </span>
             </label>
-          </div>
-        )}
-
-        {/* Status Filter (Tasks only) */}
-        {(!filters.type || filters.type === "all" || filters.type === "task") && (
-          <div className="flex-shrink-0">
-            <div className="relative">
-              <select
-                value={filters.status || "all"}
-                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                className={`pl-2 pr-6 py-1.5 text-xs border rounded-lg ${
-                  filters.status !== "all"
-                    ? "border-blue-300 text-blue-600"
-                    : "border-gray-300 text-gray-500"
-                }`}
-              >
-                <option value="all">All Statuses</option>
-                <option value="completed">Completed</option>
-                <option value="incomplete">Incomplete</option>
-              </select>
-              <ChevronDownIcon className="h-2.5 w-2.5 absolute right-2 top-2.5 text-gray-400 pointer-events-none" />
-            </div>
           </div>
         )}
 

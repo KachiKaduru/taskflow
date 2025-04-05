@@ -1,35 +1,74 @@
 "use client";
 
-import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, CheckCircleIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import { useTasks } from "@/app/_contexts/TaskContext";
 
 export default function TaskCard({ task }) {
-  const { deleteTask } = useTasks();
+  const { deleteTask, toggleTaskCompletion } = useTasks();
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-      <div className="p-5">
-        <div className="flex justify-between">
-          <h3 className="font-medium text-gray-800">{task.title}</h3>
-          <button
-            onClick={() => deleteTask(task.id)}
-            className="text-gray-400 hover:text-red-500 transition-colors"
-          >
-            <TrashIcon className="h-5 w-5" />
-          </button>
+    <div className="p-4 hover:bg-gray-50 group transition-colors">
+      <div className="flex items-start gap-3">
+        {/* Icon Container (now with completion state) */}
+        <div
+          className={`h-10 w-10 rounded-full flex items-center justify-center 
+            ${task.isCompleted ? "bg-green-100" : "bg-blue-100"}`}
+        >
+          <RectangleStackIcon
+            className={`h-5 w-5 ${task.isCompleted ? "text-green-600" : "text-blue-600"}`}
+          />
         </div>
-        {task.description && <p className="text-gray-600 mt-2 text-sm">{task.description}</p>}
-        {task.dueDate && (
-          <div className="mt-3 flex items-center text-sm text-gray-500">
-            <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
+
+        {/* Content Area */}
+        <div className="flex-1 min-w-0">
+          <div className="flex justify-between gap-2">
+            <h3
+              className={`font-medium truncate ${
+                task.isCompleted ? "line-through text-gray-400" : "text-gray-800"
+              }`}
+            >
+              {task.title}
+            </h3>
+            {/* <button
+              onClick={() => deleteTask(task.id)}
+              className="text-gray-300 hover:text-red-500 transition-colors flex-shrink-0"
+              aria-label="Delete task"
+            >
+              <TrashIcon className="h-4 w-4" />
+            </button> */}
           </div>
-        )}
-      </div>
-      <div className="bg-gray-50 px-5 py-3 flex justify-end">
-        <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-blue-600">
-          <CheckIcon className="h-4 w-4" />
-          <span>Complete</span>
-        </button>
+
+          {/* Description */}
+          {task.description && (
+            <p
+              className={`text-sm mt-1 truncate ${
+                task.isCompleted ? "text-gray-400" : "text-gray-500"
+              }`}
+            >
+              {task.description}
+            </p>
+          )}
+
+          {/* Meta Info */}
+          <div className="mt-2 flex items-center justify-between text-xs">
+            {task.dueDate && (
+              <span className={`${task.isCompleted ? "text-gray-400" : "text-gray-500"}`}>
+                Due: {new Date(task.dueDate).toLocaleDateString()}
+              </span>
+            )}
+
+            <button
+              onClick={() => toggleTaskCompletion(task.id)}
+              className={`flex items-center gap-1 ${
+                task.isCompleted ? "text-green-600" : "text-gray-400 hover:text-blue-600"
+              }`}
+              aria-label={task.isCompleted ? "Mark as incomplete" : "Mark as complete"}
+            >
+              <CheckCircleIcon className="h-4 w-4" />
+              <span>{task.isCompleted ? "Completed 🏆" : "Not completed"}</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

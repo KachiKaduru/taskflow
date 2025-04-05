@@ -2,9 +2,12 @@
 
 import { useEvents } from "@/app/_contexts/EventContext";
 import FormLabel from "../form/FormLabel";
+import { getCurrentTime, getDate } from "@/app/_lib/helpers";
 
 export default function CreateEvent({ onClose }) {
   const { addEvent } = useEvents();
+  const currentTime = getCurrentTime();
+  const todaysDate = getDate();
 
   const handleSubmit = async (formData) => {
     const newEvent = {
@@ -48,7 +51,8 @@ export default function CreateEvent({ onClose }) {
           <input
             type="date"
             name="date"
-            min={new Date().toISOString().split("T")[0]}
+            min={todaysDate}
+            defaultValue={todaysDate}
             className="w-full p-2 border rounded-lg"
             required
           />
@@ -56,7 +60,13 @@ export default function CreateEvent({ onClose }) {
         <div className="grid grid-cols-2 gap-2">
           <div>
             <FormLabel>Start Time</FormLabel>
-            <input type="time" name="startTime" required className="w-full p-2 border rounded-lg" />
+            <input
+              type="time"
+              name="startTime"
+              required
+              className="w-full p-2 border rounded-lg"
+              defaultValue={currentTime}
+            />
           </div>
           <div>
             <FormLabel>End Time</FormLabel>

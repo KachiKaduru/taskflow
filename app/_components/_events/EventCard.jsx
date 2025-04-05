@@ -1,3 +1,4 @@
+import { formatTimeString } from "@/app/_lib/helpers";
 import { CalendarIcon } from "@heroicons/react/24/outline";
 
 export default function EventCard({ event }) {
@@ -10,7 +11,7 @@ export default function EventCard({ event }) {
         <div>
           <h3 className="font-medium">{event.title}</h3>
           <p className="text-sm text-gray-500">
-            {new Date(event.startTime).toLocaleTimeString()} - {event.location}
+            {formatTimeString(event.startTime)} - {event.location}
           </p>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CalendarIcon, ClockIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 
-export default function ProfileInfo() {
+export default function ProfileInfo({ user }) {
   const [userData, setUserData] = useState({
     name: "John Doe",
     email: "johndoe@example.com",
@@ -16,20 +16,16 @@ export default function ProfileInfo() {
     <div className="lg:col-span-1 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
       <div className="flex flex-col items-center">
         <div className="relative mb-4">
-          {userData.avatar_url ? (
-            <img
-              src={userData.avatar_url}
-              alt="Profile"
-              className="h-24 w-24 rounded-full object-cover"
-            />
+          {user.image ? (
+            <img src={user.image} alt="Profile" className="h-24 w-24 rounded-full object-cover" />
           ) : (
             <UserCircleIcon className="h-24 w-24 text-gray-400" />
           )}
         </div>
 
-        <h2 className="text-xl font-bold text-center mb-2">{userData.name}</h2>
+        <h2 className="text-xl font-bold text-center mb-2">{user.name}</h2>
 
-        <div className="text-gray-500 text-sm mb-6">{userData.email}</div>
+        <div className="text-gray-500 text-sm mb-6">{user.email}</div>
 
         <div className="w-full space-y-4">
           <div className="flex items-center">

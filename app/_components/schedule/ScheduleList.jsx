@@ -7,12 +7,11 @@ import EventCard from "../_events/EventCard";
 import AppointmentCard from "../_appointments/AppointmentCard";
 
 export default function ScheduleList() {
-  const { scheduleItems, getFilteredItems } = useCalendar();
+  const { getFilteredItems } = useCalendar();
   const items = getFilteredItems();
-  console.log(("filtered Items:", items), scheduleItems);
 
   return (
-    <section className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+    <section className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 my-5">
       {items.length > 0 ? (
         <div className="divide-y divide-gray-100">
           {items.map((item) => {

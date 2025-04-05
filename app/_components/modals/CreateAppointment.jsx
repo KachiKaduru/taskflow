@@ -2,9 +2,12 @@
 
 import { useAppointments } from "@/app/_contexts/AppointmentContext";
 import FormLabel from "../form/FormLabel";
+import { getCurrentTime, getDate } from "@/app/_lib/helpers";
 
 export default function CreateAppointment({ onClose }) {
   const { addAppointment } = useAppointments();
+  const currentTime = getCurrentTime();
+  const todaysDate = getDate();
 
   const handleSubmit = async (formData) => {
     const newAppointment = {
@@ -43,14 +46,21 @@ export default function CreateAppointment({ onClose }) {
           <input
             type="date"
             name="date"
-            min={new Date().toISOString().split("T")[0]}
+            defaultValue={todaysDate}
+            min={todaysDate}
             className="w-full p-2 border rounded-lg"
             required
           />
         </div>
         <div>
           <FormLabel>Time</FormLabel>
-          <input type="time" name="time" className="w-full p-2 border rounded-lg" required />
+          <input
+            type="time"
+            name="time"
+            defaultValue={currentTime}
+            className="w-full p-2 border rounded-lg"
+            required
+          />
         </div>
       </div>
 

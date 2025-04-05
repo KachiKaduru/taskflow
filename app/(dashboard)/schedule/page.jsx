@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function SchedulePage() {
   return (
-    <section>
+    <section className="space-y-3">
       <PageHeader title="Schedule List">
         <CreateForm />
       </PageHeader>
