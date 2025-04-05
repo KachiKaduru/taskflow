@@ -10,18 +10,18 @@ export function useScheduleMetrics() {
   const { tasks } = useTasks();
   const { events } = useEvents();
   const { appointments } = useAppointments();
-  const { date, view } = useCalendar();
+  const { date, view, scheduleItems } = useCalendar();
 
   return useMemo(() => {
     // Combine all items with their types
-    const allItems = [
-      ...tasks.map((task) => ({ ...task, type: "task" })),
-      ...events.map((event) => ({ ...event, type: "event" })),
-      ...appointments.map((appt) => ({ ...appt, type: "appointment" })),
-    ];
+    // const allItems = [
+    //   ...tasks.map((task) => ({ ...task, type: "task" })),
+    //   ...events.map((event) => ({ ...event, type: "event" })),
+    //   ...appointments.map((appt) => ({ ...appt, type: "appointment" })),
+    // ];
 
     // Filter items based on current calendar view
-    const filteredItems = allItems.filter((item) => {
+    const filteredItems = scheduleItems.filter((item) => {
       const itemDate = new Date(item.dueDate || item.date || item.startTime);
 
       if (view === "day") {

@@ -1,5 +1,6 @@
 "use client";
 import { useAppointments } from "@/app/_contexts/AppointmentContext";
+import { useCalendar } from "@/app/_contexts/CalendarContext";
 import { useEvents } from "@/app/_contexts/EventContext";
 import { useTasks } from "@/app/_contexts/TaskContext";
 import { CalendarIcon, ClockIcon, ListBulletIcon } from "@heroicons/react/24/outline";
@@ -9,6 +10,7 @@ export default function StatCards() {
   const { tasks, getCompletionRate, getTodaysTasks } = useTasks();
   const { events } = useEvents();
   const { appointments } = useAppointments();
+  const { scheduleItems } = useCalendar();
 
   const todayTasks = getTodaysTasks();
   const completionRate = getCompletionRate();
@@ -25,7 +27,8 @@ export default function StatCards() {
       title: "Total Items",
       icon: ListBulletIcon,
       colors: "bg-blue-50 text-blue-600",
-      data: tasks.length + events.length + appointments.length,
+      data: scheduleItems.length,
+      // data: tasks.length + events.length + appointments.length,
       trend: "↑ 12%",
     },
     {
@@ -98,13 +101,20 @@ function Card({ stat }) {
           <stat.icon className="h-5 w-5" />
         </div>
       </div>
-      {stat.progress && (
+
+      {stat.progress && stat.progress > 0 ? (
         <div className="mt-3 w-full bg-gray-100 rounded-full h-2">
           <div
             className="bg-purple-500 h-2 rounded-full"
             style={{ width: `${stat.progress}%` }}
           ></div>
         </div>
+      ) : (
+        stat.progress < 1 && (
+          <div className="mt-3 w-full bg-gray-100 rounded-full h-2">
+            <div className="bg-purple-500 h-2 rounded-full" style={{ width: `2%` }}></div>
+          </div>
+        )
       )}
     </div>
   );
