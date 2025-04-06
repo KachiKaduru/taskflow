@@ -80,24 +80,63 @@ export function TaskProvider({ children }) {
   }, []);
 
   const value = useMemo(() => {
-    const addTask = (task) => {
-      const taskToAdd = { ...task, id: Date.now() };
-      dispatch({ type: ACTIONS.ADD_TASK, payload: taskToAdd });
-      localStorage.setItem("tasks", JSON.stringify([...state.tasks, taskToAdd]));
+    // const addTask = (task) => {
+    //   if (!task.isRecurring || task.recurrenceDays < 2) {
+    //     const taskToAdd = { ...task, id: Date.now() };
+    //     dispatch({ type: ACTIONS.ADD_TASK, payload: taskToAdd });
+    //     localStorage.setItem("tasks", JSON.stringify([...state.tasks, taskToAdd]));
+    //   }
 
+    //   if (task.isRecurring && task.recurrenceDays > 1) {
+    //     for (let i = 1; i < task.recurrenceDays; i++) {
+    //       const date = new Date(task.dueDate);
+    //       date.setDate(date.getDate() + i);
+    //       const recurringTask = { ...task, id: Date.now() + i, dueDate: date.toISOString() };
+
+    //       dispatch({
+    //         type: ACTIONS.ADD_TASK,
+    //         payload: recurringTask,
+    //       });
+    //     }
+
+    //     const currentTasks = [...state.tasks];
+
+    //     localStorage.setItem("tasks", JSON.stringify(currentTasks));
+    //   }
+    // };
+
+    const addTask = (task) => {
+      const now = Date.now();
+      const newTasks = [];
+
+      // Always create the initial task
+      const baseTask = { ...task, id: now };
+      newTasks.push(baseTask);
+
+      // If it's recurring, add the additional instances
       if (task.isRecurring && task.recurrenceDays > 1) {
         for (let i = 1; i < task.recurrenceDays; i++) {
           const date = new Date(task.dueDate);
           date.setDate(date.getDate() + i);
-          const recurringTask = { ...task, id: Date.now() + i, dueDate: date.toISOString() };
 
-          dispatch({
-            type: ACTIONS.ADD_TASK,
-            payload: recurringTask,
-          });
-          localStorage.setItem("tasks", JSON.stringify([...state.tasks, recurringTask]));
+          const recurringTask = {
+            ...task,
+            id: now + i,
+            dueDate: date.toISOString(),
+          };
+
+          newTasks.push(recurringTask);
         }
       }
+
+      // Dispatch all tasks
+      newTasks.forEach((t) => {
+        dispatch({ type: ACTIONS.ADD_TASK, payload: t });
+      });
+
+      // Update localStorage once with the correct final list
+      const updatedTasks = [...state.tasks, ...newTasks];
+      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     };
 
     const deleteTask = (id) => dispatch({ type: ACTIONS.DELETE_TASK, payload: id });

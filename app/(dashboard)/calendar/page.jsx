@@ -1,8 +1,8 @@
 import CalendarFilter from "@/app/_components/calendar/CalendarFilter";
 import PageHeader from "@/app/_components/ui/PageHeader";
 import CalendarStats from "@/app/_components/calendar/CalendarStats";
-import CalendarTasksList from "@/app/_components/calendar/CalendarTasksList";
 import CalendarItem from "@/app/_components/calendar/CalendarItem";
+import CalendarItemList from "@/app/_components/calendar/CalendarItemList";
 
 export default function CalendarPage() {
   return (
@@ -17,7 +17,7 @@ export default function CalendarPage() {
         <div className="lg:col-span-1 space-y-6">
           <CalendarStats />
 
-          <CalendarTasksList />
+          <CalendarItemList />
         </div>
       </div>
     </div>

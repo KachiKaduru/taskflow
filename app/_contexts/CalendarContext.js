@@ -51,7 +51,6 @@ export const CalendarContext = createContext();
 
 export function CalendarProvider({ children }) {
   const [state, dispatch] = useReducer(calendarReducer, initialState);
-  // const { filters, scheduleItems } = state;
   const { tasks } = useTasks();
   const { events } = useEvents();
   const { appointments } = useAppointments();
@@ -64,7 +63,6 @@ export function CalendarProvider({ children }) {
       ...appointments.map((appt) => ({ ...appt, type: "appointment" })),
     ];
     dispatch({ type: ACTIONS.SET_SCHEDULE_ITEMS, payload: combined });
-    // localStorage.setItem("scheduledItems", JSON.stringify([...combined]));
   }, [tasks, events, appointments]);
 
   const value = useMemo(() => {
@@ -84,9 +82,34 @@ export function CalendarProvider({ children }) {
     const getFilteredItems = () => {
       return state.scheduleItems
         .filter((item) => {
+          const itemDate = new Date(item.date || item.dueDate || item.startTime);
+
+          // View-based filtering (day/week/month)
+          if (state.view === "day") {
+            if (itemDate.toDateString() !== state.date.toDateString()) {
+              return false;
+            }
+          } else if (state.view === "week") {
+            const startOfWeek = new Date(state.date);
+            startOfWeek.setDate(state.date.getDate() - state.date.getDay());
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+            if (!(itemDate >= startOfWeek && itemDate <= endOfWeek)) {
+              return false;
+            }
+          } else if (state.view === "month") {
+            if (
+              itemDate.getMonth() !== state.date.getMonth() ||
+              itemDate.getFullYear() !== state.date.getFullYear()
+            ) {
+              return false;
+            }
+          }
+
           // 1. Date Filter
           if (state.filters.date) {
-            const itemDate = new Date(item.date || item.dueDate || item.startTime);
+            // const itemDate = new Date(item.date || item.dueDate || item.startTime);
             const filterDate = new Date(state.filters.date);
             if (itemDate.toDateString() !== filterDate.toDateString()) {
               return false;
@@ -95,7 +118,7 @@ export function CalendarProvider({ children }) {
 
           // 2. Month Filter
           if (state.filters.month !== "") {
-            const itemDate = new Date(item.date || item.dueDate || item.startTime);
+            // const itemDate = new Date(item.date || item.dueDate || item.startTime);
             if (itemDate.getMonth() !== parseInt(state.filters.month)) {
               return false;
             }
