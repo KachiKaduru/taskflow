@@ -51,6 +51,7 @@ export function AppointmentProvider({ children }) {
   const value = useMemo(() => {
     const addAppointment = (appointment) => {
       dispatch({ type: ACTIONS.ADD_APPOINTMENT, payload: { ...appointment, id: Date.now() } });
+      // localStorage.setItem('appointments', [])
     };
 
     const deleteAppointment = (id) => {

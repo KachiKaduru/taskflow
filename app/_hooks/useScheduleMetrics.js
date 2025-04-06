@@ -99,7 +99,7 @@ export function useScheduleMetrics() {
         appointment: sortedItems.filter((item) => item.type === "appointment"),
       },
     };
-  }, [tasks, events, appointments, date, view]);
+  }, [date, view, scheduleItems]);
 }
 
 // Helper function for productivity calculation
