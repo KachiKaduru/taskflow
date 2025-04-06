@@ -5,7 +5,6 @@ import { filterTypes } from "@/app/_lib/helpers";
 
 export default function CalendarFilter() {
   const { view, setView, filters, setFilters } = useCalendar();
-  // console.log(filters);
 
   const viewFilters = ["day", "week", "month"];
 

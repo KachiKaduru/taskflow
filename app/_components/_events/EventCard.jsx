@@ -11,7 +11,7 @@ export default function EventCard({ event }) {
         <div>
           <h3 className="font-medium">{event.title}</h3>
           <p className="text-sm text-gray-500">
-            {formatTimeString(event.startTime)} - {event.location}
+            {formatTimeString(event.startTime)} • {event.location}
           </p>
         </div>
       </div>

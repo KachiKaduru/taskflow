@@ -58,10 +58,10 @@ export function CalendarProvider({ children }) {
 
   const pathname = usePathname();
 
-  useEffect(() => {
-    dispatch({ type: ACTIONS.RESET_FILTERS });
-    dispatch({ type: ACTIONS.SET_VIEW, payload: initialState.view });
-  }, [pathname]);
+  // useEffect(() => {
+  //   dispatch({ type: ACTIONS.RESET_FILTERS });
+  //   dispatch({ type: ACTIONS.SET_VIEW, payload: initialState.view });
+  // }, [pathname]);
 
   // Combine all schedule items when dependencies change
   useEffect(() => {
@@ -91,29 +91,6 @@ export function CalendarProvider({ children }) {
       return state.scheduleItems
         .filter((item) => {
           const itemDate = new Date(item.date || item.dueDate || item.startTime);
-
-          // View-based filtering (day/week/month)
-          if (state.view === "day") {
-            if (itemDate.toDateString() !== state.date.toDateString()) {
-              return false;
-            }
-          } else if (state.view === "week") {
-            const startOfWeek = new Date(state.date);
-            startOfWeek.setDate(state.date.getDate() - state.date.getDay());
-            const endOfWeek = new Date(startOfWeek);
-            endOfWeek.setDate(startOfWeek.getDate() + 6);
-
-            if (!(itemDate >= startOfWeek && itemDate <= endOfWeek)) {
-              return false;
-            }
-          } else if (state.view === "month") {
-            if (
-              itemDate.getMonth() !== state.date.getMonth() ||
-              itemDate.getFullYear() !== state.date.getFullYear()
-            ) {
-              return false;
-            }
-          }
 
           // 1. Date Filter
           if (state.filters.date) {
@@ -168,7 +145,6 @@ export function CalendarProvider({ children }) {
       resetFilters,
     };
   }, [state]);
-  // }, [state.date, state.view, state.scheduleItems, state.filters, state.loading, state.error]);
 
   return <CalendarContext.Provider value={value}>{children}</CalendarContext.Provider>;
 }
