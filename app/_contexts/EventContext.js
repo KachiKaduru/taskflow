@@ -1,7 +1,8 @@
 "use client";
-import { createContext, useContext, useReducer, useMemo } from "react";
+import { createContext, useContext, useReducer, useMemo, useEffect } from "react";
 
 const ACTIONS = {
+  LOAD_EVENTS: "LOAD_EVENTS",
   ADD_EVENT: "ADD_EVENT",
   DELETE_EVENT: "DELETE_EVENT",
   UPDATE_EVENT: "UPDATE_EVENT",
@@ -17,6 +18,11 @@ const initialState = {
 
 function eventReducer(state, action) {
   switch (action.type) {
+    case ACTIONS.LOAD_EVENTS:
+      return {
+        ...state,
+        events: action.payload,
+      };
     case ACTIONS.ADD_EVENT:
       return {
         ...state,
@@ -48,9 +54,17 @@ export const EventContext = createContext();
 export function EventProvider({ children }) {
   const [state, dispatch] = useReducer(eventReducer, initialState);
 
+  useEffect(() => {
+    const stored = localStorage.getItem("events");
+    const parsed = stored ? JSON.parse(stored) : [];
+    dispatch({ type: ACTIONS.LOAD_EVENTS, payload: parsed });
+  }, []);
+
   const value = useMemo(() => {
     const addEvent = (event) => {
-      dispatch({ type: ACTIONS.ADD_EVENT, payload: { ...event, id: Date.now() } });
+      const newEvent = { ...event, id: Date.now() };
+      dispatch({ type: ACTIONS.ADD_EVENT, payload: newEvent });
+      localStorage.setItem("events", JSON.stringify([...state.events, newEvent]));
     };
 
     const deleteEvent = (id) => {

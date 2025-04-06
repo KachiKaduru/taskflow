@@ -64,7 +64,7 @@ export function CalendarProvider({ children }) {
       ...appointments.map((appt) => ({ ...appt, type: "appointment" })),
     ];
     dispatch({ type: ACTIONS.SET_SCHEDULE_ITEMS, payload: combined });
-    localStorage.setItem("scheduledItems", JSON.stringify([...combined]));
+    // localStorage.setItem("scheduledItems", JSON.stringify([...combined]));
   }, [tasks, events, appointments]);
 
   const value = useMemo(() => {

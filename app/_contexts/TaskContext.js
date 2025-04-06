@@ -1,8 +1,9 @@
 "use client";
 
-import { createContext, useContext, useReducer, useMemo } from "react";
+import { createContext, useContext, useReducer, useMemo, useEffect } from "react";
 
 const ACTIONS = {
+  LOAD_TASKS: "LOAD_TASKS",
   ADD_TASK: "ADD_TASK",
   DELETE_TASK: "DELETE_TASK",
   TOGGLE_COMPLETION: "TOGGLE_COMPLETION",
@@ -26,6 +27,11 @@ const initialState = {
 
 function taskReducer(state, action) {
   switch (action.type) {
+    case ACTIONS.LOAD_TASKS:
+      return {
+        ...state,
+        tasks: action.payload,
+      };
     case ACTIONS.ADD_TASK:
       return {
         ...state,
@@ -67,23 +73,29 @@ export const TaskContext = createContext();
 export function TaskProvider({ children }) {
   const [state, dispatch] = useReducer(taskReducer, initialState);
 
+  useEffect(() => {
+    const stored = localStorage.getItem("tasks");
+    const parsed = stored ? JSON.parse(stored) : [];
+    dispatch({ type: ACTIONS.LOAD_TASKS, payload: parsed });
+  }, []);
+
   const value = useMemo(() => {
     const addTask = (task) => {
       const taskToAdd = { ...task, id: Date.now() };
       dispatch({ type: ACTIONS.ADD_TASK, payload: taskToAdd });
+      localStorage.setItem("tasks", JSON.stringify([...state.tasks, taskToAdd]));
 
       if (task.isRecurring && task.recurrenceDays > 1) {
         for (let i = 1; i < task.recurrenceDays; i++) {
           const date = new Date(task.dueDate);
           date.setDate(date.getDate() + i);
+          const recurringTask = { ...task, id: Date.now() + i, dueDate: date.toISOString() };
+
           dispatch({
             type: ACTIONS.ADD_TASK,
-            payload: {
-              ...task,
-              id: Date.now() + i,
-              dueDate: date.toISOString(),
-            },
+            payload: recurringTask,
           });
+          localStorage.setItem("tasks", JSON.stringify([...state.tasks, recurringTask]));
         }
       }
     };

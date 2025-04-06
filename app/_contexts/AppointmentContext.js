@@ -1,7 +1,9 @@
 "use client";
-import { createContext, useContext, useReducer, useMemo } from "react";
+
+import { createContext, useContext, useReducer, useMemo, useEffect } from "react";
 
 const ACTIONS = {
+  LOAD_APPOINTMENTS: "LOAD_APPOINTMENTS",
   ADD_APPOINTMENT: "ADD_APPOINTMENT",
   DELETE_APPOINTMENT: "DELETE_APPOINTMENT",
   UPDATE_APPOINTMENT: "UPDATE_APPOINTMENT",
@@ -17,6 +19,11 @@ const initialState = {
 
 function appointmentReducer(state, action) {
   switch (action.type) {
+    case ACTIONS.LOAD_APPOINTMENTS:
+      return {
+        ...state,
+        appointments: action.payload,
+      };
     case ACTIONS.ADD_APPOINTMENT:
       return {
         ...state,
@@ -48,10 +55,17 @@ export const AppointmentContext = createContext();
 export function AppointmentProvider({ children }) {
   const [state, dispatch] = useReducer(appointmentReducer, initialState);
 
+  useEffect(() => {
+    const stored = localStorage.getItem("appointments");
+    const parsed = stored ? JSON.parse(stored) : [];
+    dispatch({ type: ACTIONS.LOAD_APPOINTMENTS, payload: parsed });
+  }, []);
+
   const value = useMemo(() => {
     const addAppointment = (appointment) => {
-      dispatch({ type: ACTIONS.ADD_APPOINTMENT, payload: { ...appointment, id: Date.now() } });
-      // localStorage.setItem('appointments', [])
+      const newAppt = { ...appointment, id: Date.now() };
+      dispatch({ type: ACTIONS.ADD_APPOINTMENT, payload: newAppt });
+      localStorage.setItem("appointments", JSON.stringify([...state.appointments, newAppt]));
     };
 
     const deleteAppointment = (id) => {
