@@ -1,17 +1,13 @@
 "use client";
 
 import { useCalendar } from "@/app/_contexts/CalendarContext";
+import { filterTypes } from "@/app/_lib/helpers";
 
 export default function CalendarFilter() {
   const { view, setView, filters, setFilters } = useCalendar();
+  // console.log(filters);
 
   const viewFilters = ["day", "week", "month"];
-  const typeFilters = [
-    { value: "all", label: "All" },
-    { value: "task", label: "Tasks" },
-    { value: "event", label: "Events" },
-    { value: "appointment", label: "Meetings" },
-  ];
 
   return (
     <div className="flex flex-wrap gap-4 items-center">
@@ -36,7 +32,7 @@ export default function CalendarFilter() {
           onChange={(e) => setFilters({ ...filters, type: e.target.value })}
           className="text-sm border rounded-md px-3 py-1"
         >
-          {typeFilters.map((filter) => (
+          {filterTypes.map((filter) => (
             <option key={filter.value} value={filter.value}>
               {filter.label}
             </option>

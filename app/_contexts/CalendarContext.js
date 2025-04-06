@@ -3,6 +3,7 @@ import { createContext, useContext, useReducer, useMemo, useEffect } from "react
 import { useTasks } from "./TaskContext";
 import { useEvents } from "./EventContext";
 import { useAppointments } from "./AppointmentContext";
+import { usePathname } from "next/navigation";
 
 const ACTIONS = {
   SET_DATE: "SET_DATE",
@@ -54,6 +55,13 @@ export function CalendarProvider({ children }) {
   const { tasks } = useTasks();
   const { events } = useEvents();
   const { appointments } = useAppointments();
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    dispatch({ type: ACTIONS.RESET_FILTERS });
+    dispatch({ type: ACTIONS.SET_VIEW, payload: initialState.view });
+  }, [pathname]);
 
   // Combine all schedule items when dependencies change
   useEffect(() => {

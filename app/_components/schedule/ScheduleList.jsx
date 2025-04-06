@@ -7,14 +7,14 @@ import EventCard from "../_events/EventCard";
 import AppointmentCard from "../_appointments/AppointmentCard";
 
 export default function ScheduleList() {
-  const { getFilteredItems } = useCalendar();
+  const { getFilteredItems, scheduleItems } = useCalendar();
   const items = getFilteredItems();
 
   return (
     <section className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 my-5">
-      {items.length > 0 ? (
+      {scheduleItems.length > 0 ? (
         <div className="divide-y divide-gray-100">
-          {items.map((item) => {
+          {scheduleItems.map((item) => {
             switch (item.type) {
               case "task":
                 return <TaskCard key={item.id} task={item} />;

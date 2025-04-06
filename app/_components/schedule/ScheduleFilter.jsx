@@ -1,32 +1,12 @@
 "use client";
 
 import { useCalendar } from "@/app/_contexts/CalendarContext";
+import { filterTypes, months } from "@/app/_lib/helpers";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-const types = [
-  { value: "all", label: "All Items" },
-  { value: "task", label: "Tasks" },
-  { value: "event", label: "Events" },
-  { value: "appointment", label: "Appointments" },
-];
 
 export default function ScheduleFilter() {
   const { filters, setFilters, resetFilters } = useCalendar();
+  // console.log(filters);
 
   return (
     <section className="bg-white py-3 px-4 border-b border-gray-200 z-10">
@@ -98,7 +78,7 @@ export default function ScheduleFilter() {
               onChange={(e) => setFilters({ ...filters, type: e.target.value })}
               className="pl-2 pr-6 py-1.5 text-xs border border-gray-300 rounded-lg"
             >
-              {types.map((type) => (
+              {filterTypes.map((type) => (
                 <option key={type.value} value={type.value}>
                   {type.label}
                 </option>
