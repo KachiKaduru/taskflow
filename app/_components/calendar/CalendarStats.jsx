@@ -83,7 +83,8 @@ export default function CalendarStats() {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    // <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="stat-cards-grid">
       {cardsData.map((card) => (
         <CalendarStatCard card={card} key={card.title} />
       ))}

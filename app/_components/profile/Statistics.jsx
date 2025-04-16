@@ -1,69 +1,31 @@
-// "use client";
-
-// import { ChartBarIcon } from "@heroicons/react/24/outline";
-// import ActivityGraph from "../ui/ActivityGraph";
-
-// export default function Statistics() {
-//   const stats = {
-//     tasksCompleted: 142,
-//     productivityScore: 87,
-//     streakDays: 14,
-//     priorityTasks: 23,
-//     weeklyAverage: "5.2 tasks/day",
-//   };
-
-//   return (
-//     <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-//       <h3 className="text-lg font-semibold mb-6 flex items-center">
-//         <ChartBarIcon className="h-5 w-5 text-blue-500 mr-2" />
-//         Your Statistics
-//       </h3>
-
-//       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-//         <div className="bg-blue-50 rounded-lg p-4 text-center">
-//           <div className="text-blue-600 font-bold text-2xl">{stats.tasksCompleted}</div>
-//           <div className="text-gray-600 text-sm">Completed</div>
-//         </div>
-//         <div className="bg-green-50 rounded-lg p-4 text-center">
-//           <div className="text-green-600 font-bold text-2xl">{stats.productivityScore}%</div>
-//           <div className="text-gray-600 text-sm">Productivity</div>
-//         </div>
-//         <div className="bg-purple-50 rounded-lg p-4 text-center">
-//           <div className="text-purple-600 font-bold text-2xl">{stats.streakDays}</div>
-//           <div className="text-gray-600 text-sm">Day Streak</div>
-//         </div>
-//         <div className="bg-red-50 rounded-lg p-4 text-center">
-//           <div className="text-red-600 font-bold text-2xl">{stats.priorityTasks}</div>
-//           <div className="text-gray-600 text-sm">Priority</div>
-//         </div>
-//         <div className="bg-yellow-50 rounded-lg p-4 text-center">
-//           <div className="text-yellow-600 font-bold text-2xl">{stats.weeklyAverage}</div>
-//           <div className="text-gray-600 text-sm">Daily Avg</div>
-//         </div>
-//       </div>
-
-//       <ActivityGraph />
-//     </div>
-//   );
-// }
-
 "use client";
 
-import { ChartBarIcon, CheckBadgeIcon } from "@heroicons/react/24/outline";
+import { useMemo } from "react";
+import {
+  CalendarDaysIcon,
+  ChartBarIcon,
+  InformationCircleIcon,
+  PercentBadgeIcon,
+  RocketLaunchIcon,
+} from "@heroicons/react/24/outline";
 import ActivityGraph from "../ui/ActivityGraph";
 import { useTasks } from "@/app/_contexts/TaskContext";
 import { useEvents } from "@/app/_contexts/EventContext";
 import { useAppointments } from "@/app/_contexts/AppointmentContext";
-import { useMemo } from "react";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import { useCalendar } from "@/app/_contexts/CalendarContext";
+import { useScheduleMetrics } from "@/app/_hooks/useScheduleMetrics";
+import { AverageIcon, PriorityIcon, TotalActivitiesIcon } from "../_icons/icons";
 
 export default function Statistics() {
   const { tasks, getCompletionRate } = useTasks();
   const { events } = useEvents();
   const { appointments } = useAppointments();
+  const { scheduleItems } = useCalendar();
+  const { completedTasks } = useScheduleMetrics();
 
   const stats = useMemo(() => {
     // Task Metrics
-    const completedTasks = tasks.filter((t) => t.isCompleted).length;
     const priorityTasks = tasks.filter((t) => t.isPriority).length;
     const taskCompletionRate = getCompletionRate();
 
@@ -94,40 +56,45 @@ export default function Statistics() {
       appointmentsAttended: completedAppointments,
       productivityScore,
       streakDays,
-      totalActivities: tasks.length + events.length + appointments.length,
+      totalActivities: scheduleItems.length,
       weeklyAverage: calculateWeeklyAverage(tasks, events, appointments),
     };
-  }, [tasks, events, appointments]);
+  }, [tasks, events, appointments, scheduleItems]);
 
   const statisticsArray = [
-    { value: stats.tasksCompleted, label: "Tasks Done", color: "blue", icon: CheckBadgeIcon },
-    { value: stats.priorityTasks, label: "Priority Tasks", color: "red", icon: CheckBadgeIcon },
+    { value: stats.tasksCompleted, label: "Tasks Done", color: "blue", icon: CheckCircleIcon },
+    {
+      value: stats.priorityTasks,
+      label: "Priority Tasks",
+      color: "red",
+      icon: PriorityIcon,
+    },
     {
       value: stats.upcomingEvents,
       label: "Upcoming Events",
       color: "purple",
-      icon: CheckBadgeIcon,
+      icon: CalendarDaysIcon,
     },
     {
       value: stats.appointmentsAttended,
       label: "Meetings Attended",
       color: "teal",
-      icon: CheckBadgeIcon,
+      icon: InformationCircleIcon,
     },
     {
       value: `${stats.productivityScore}%`,
       label: "Productivity",
       color: "green",
-      icon: CheckBadgeIcon,
+      icon: PercentBadgeIcon,
     },
-    { value: stats.streakDays, label: "Day Streak", color: "yellow", icon: CheckBadgeIcon },
+    { value: stats.streakDays, label: "Day Streak", color: "yellow", icon: RocketLaunchIcon },
     {
       value: stats.totalActivities,
       label: "Total Activities",
       color: "indigo",
-      icon: CheckBadgeIcon,
+      icon: TotalActivitiesIcon,
     },
-    { value: stats.weeklyAverage, label: "Daily Average", color: "orange", icon: CheckBadgeIcon },
+    { value: stats.weeklyAverage, label: "Daily Average", color: "orange", icon: AverageIcon },
   ];
 
   return (
@@ -152,14 +119,14 @@ export default function Statistics() {
 function StatCard({ stat }) {
   const colorClasses = {
     bg: {
-      blue: "bg-blue-50",
-      red: "bg-red-50",
-      green: "bg-green-50",
-      purple: "bg-purple-50",
-      teal: "bg-teal-50",
-      yellow: "bg-yellow-50",
-      indigo: "bg-indigo-50",
-      orange: "bg-orange-50",
+      blue: "bg-blue-50 text-blue-600",
+      red: "bg-red-50 text-red-600",
+      green: "bg-green-50 text-green-600",
+      purple: "bg-purple-50 text-purple-600",
+      teal: "bg-teal-50 text-teal-600",
+      yellow: "bg-yellow-50 text-yellow-600",
+      indigo: "bg-indigo-50 text-indigo-600",
+      orange: "bg-orange-50 text-orange-600",
     },
     text: {
       blue: "text-blue-600",

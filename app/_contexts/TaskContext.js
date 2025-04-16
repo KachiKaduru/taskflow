@@ -46,7 +46,8 @@ function taskReducer(state, action) {
       return {
         ...state,
         tasks: state.tasks.map((task) =>
-          task.id === action.payload ? { ...task, isCompleted: !task.isCompleted } : task
+          // task.id === action.payload ? { ...task, isCompleted: !task.isCompleted } : task
+          task.id === action.payload ? { ...task, isCompleted: true } : task
         ),
       };
     case ACTIONS.UPDATE_FILTERS:

@@ -1,10 +1,9 @@
 "use client";
 
 import { useCalendar } from "@/app/_contexts/CalendarContext";
-import { filterTypes } from "@/app/_lib/helpers";
 
 export default function CalendarFilter() {
-  const { view, setView, filters, setFilters } = useCalendar();
+  const { view, setView } = useCalendar();
 
   const viewFilters = ["day", "week", "month"];
 
@@ -22,21 +21,6 @@ export default function CalendarFilter() {
             {filter}
           </button>
         ))}
-      </div>
-
-      <div className="flex gap-2 items-center">
-        <span className="text-sm text-gray-500">Show:</span>
-        <select
-          value={filters.type}
-          onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-          className="text-sm border rounded-md px-3 py-1"
-        >
-          {filterTypes.map((filter) => (
-            <option key={filter.value} value={filter.value}>
-              {filter.label}
-            </option>
-          ))}
-        </select>
       </div>
     </div>
   );
