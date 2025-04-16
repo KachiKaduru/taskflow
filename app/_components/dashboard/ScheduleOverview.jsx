@@ -10,6 +10,7 @@ import {
   VideoCameraIcon,
   UserIcon,
   ClockIcon,
+  ClipboardIcon,
 } from "@heroicons/react/24/outline";
 
 export default function ScheduleOverview() {
@@ -147,7 +148,7 @@ export default function ScheduleOverview() {
           ))
         ) : (
           <div className="p-8 text-center text-gray-400">
-            <img src="/empty-state.svg" className="h-24 mx-auto mb-2" />
+            <ClipboardIcon className="h-20 mx-auto mb-2" />
             <p>No scheduled items today. Enjoy your free time!</p>
           </div>
         )}
