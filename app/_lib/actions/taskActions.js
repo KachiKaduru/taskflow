@@ -5,7 +5,6 @@ import { supabase } from "../supabase";
 
 export async function createTask(task) {
   const { user } = await auth();
-
   const { error } = await supabase
     .from("tasks")
     .insert([{ ...task, user_id: user.id }])
@@ -13,7 +12,7 @@ export async function createTask(task) {
 
   if (error) {
     console.error(error);
-    throw new Error("Could not create tasks", error);
+    throw new Error("Could not create task: ", error);
   }
 }
 

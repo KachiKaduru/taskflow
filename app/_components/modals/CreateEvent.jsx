@@ -4,6 +4,7 @@ import { useEvents } from "@/app/_contexts/EventContext";
 import FormLabel from "../form/FormLabel";
 import { getCurrentTime, getDate } from "@/app/_lib/helpers";
 import { createGoogleEvent } from "@/app/_lib/googleCalendar";
+import { createEvent } from "@/app/_lib/actions/eventActions";
 
 export default function CreateEvent({ onClose }) {
   const { addEvent } = useEvents();
@@ -22,10 +23,14 @@ export default function CreateEvent({ onClose }) {
       id: Date.now(),
     };
 
-    console.log(newEvent);
-    // await addEvent(newEvent);
-    // await createGoogleEvent(newEvent);
-    onClose();
+    try {
+      await addEvent(newEvent);
+      await createEvent(newEvent);
+      await createGoogleEvent(newEvent);
+      onClose();
+    } catch (error) {
+      throw new Error(error);
+    }
   };
 
   return (

@@ -4,6 +4,7 @@ import { useAppointments } from "@/app/_contexts/AppointmentContext";
 import FormLabel from "../form/FormLabel";
 import { getCurrentTime, getDate } from "@/app/_lib/helpers";
 import { createGoogleEvent } from "@/app/_lib/googleCalendar";
+import { createAppointment } from "@/app/_lib/actions/appointmentActions";
 
 export default function CreateAppointment({ onClose }) {
   const { addAppointment } = useAppointments();
@@ -22,9 +23,14 @@ export default function CreateAppointment({ onClose }) {
       id: Date.now(),
     };
 
-    await addAppointment(newAppointment);
-    await createGoogleEvent(newAppointment);
-    onClose();
+    try {
+      await addAppointment(newAppointment);
+      await createAppointment(newAppointment);
+      await createGoogleEvent(newAppointment);
+      onClose();
+    } catch (error) {
+      throw new Error(error);
+    }
   };
 
   return (

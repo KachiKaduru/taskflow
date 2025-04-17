@@ -31,8 +31,8 @@ const authConfig = {
         if (account) {
           user.accessToken = account.access_token;
           user.refreshToken = account.refresh_token;
-          // user.expiresAt = account.expires_at;
-          user.expiresAt = Math.floor(Date.now() / 1000) + (account.expires_in || 3600);
+          user.expiresAt = account.expires_at;
+          // user.expiresAt = Math.floor(Date.now() / 1000) + (account.expires_in || 3600);
         }
         return true;
       } catch {
