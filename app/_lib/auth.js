@@ -9,6 +9,7 @@ const authConfig = {
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
       authorization: {
         params: {
+          // scope: "openid email profile https://www.googleapis.com/auth/calendar",
           scope:
             "openid email profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/tasks",
           access_type: "offline",
@@ -30,27 +31,36 @@ const authConfig = {
         if (account) {
           user.accessToken = account.access_token;
           user.refreshToken = account.refresh_token;
-          user.expiresAt = account.expires_at;
+          // user.expiresAt = account.expires_at;
+          user.expiresAt = Math.floor(Date.now() / 1000) + (account.expires_in || 3600);
         }
         return true;
       } catch {
         return false;
       }
     },
-    async jwt({ token, account }) {
+    async jwt({ token, account, user, trigger, session }) {
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         token.expiresAt = account.expires_at;
       }
+
+      if (user) {
+        token.id = user.id;
+      }
+
       return token;
     },
-    async session({ session, user }) {
+    async session({ session, user, token }) {
       const createdUser = await getUserEmail(session.user.email);
       session.user.id = createdUser.id;
-      session.accessToken = token.accessToken;
-      session.refreshToken = token.refreshToken;
-      session.expiresAt = token.expiresAt;
+
+      if (token) {
+        session.accessToken = token.accessToken;
+        session.refreshToken = token.refreshToken;
+        session.expiresAt = token.expiresAt;
+      }
 
       return session;
     },

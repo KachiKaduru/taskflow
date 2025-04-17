@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { useTasks } from "@/app/_contexts/TaskContext";
 import FormLabel from "../form/FormLabel";
+import { createGoogleTask } from "@/app/_lib/googleCalendar";
 
 export default function CreateTask({ onClose }) {
   const { addTask } = useTasks();
@@ -28,7 +29,7 @@ export default function CreateTask({ onClose }) {
 
   const [formData, setFormData] = useState(initialState);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim()) return;
 
@@ -38,7 +39,9 @@ export default function CreateTask({ onClose }) {
       dueDate: `${formData.date}T${formData.time}:00.000Z`,
     };
 
-    addTask(newTask);
+    await addTask(newTask);
+    await createGoogleTask(newTask);
+
     setFormData(initialState);
     onClose();
   };

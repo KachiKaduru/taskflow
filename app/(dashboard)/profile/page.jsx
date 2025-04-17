@@ -10,6 +10,8 @@ export const metadata = {
 
 export default async function ProfilePage() {
   const { user } = await auth();
+  // const session = await auth();
+  // console.log(session);
 
   return (
     <section className="space-y-6">

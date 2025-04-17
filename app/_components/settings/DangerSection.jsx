@@ -1,4 +1,4 @@
-import { logout } from "@/app/_lib/actions";
+import { logout } from "@/app/_lib/actions/userActions";
 
 export default async function DangerSection() {
   return (

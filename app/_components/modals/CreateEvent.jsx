@@ -3,6 +3,7 @@
 import { useEvents } from "@/app/_contexts/EventContext";
 import FormLabel from "../form/FormLabel";
 import { getCurrentTime, getDate } from "@/app/_lib/helpers";
+import { createGoogleEvent } from "@/app/_lib/googleCalendar";
 
 export default function CreateEvent({ onClose }) {
   const { addEvent } = useEvents();
@@ -22,6 +23,7 @@ export default function CreateEvent({ onClose }) {
     };
 
     await addEvent(newEvent);
+    await createGoogleEvent(newEvent);
     onClose();
   };
 
