@@ -12,8 +12,8 @@ const authConfig = {
           scope:
             "openid email profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/tasks",
           access_type: "offline",
-          // prompt: "consent",
-          prompt: "select_account",
+          prompt: "consent",
+          // prompt: "select_account",
         },
       },
     }),
