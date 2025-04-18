@@ -15,3 +15,15 @@ export async function createEvent(event) {
     throw new Error("Could not create event: ", error);
   }
 }
+
+export async function getEvents() {
+  const { user } = await auth();
+  const { data, error } = await supabase.from("events").select("*").eq("user_id", user.id);
+
+  if (error) {
+    console.log(error);
+    throw new Error("Could not fetch events: ", error);
+  }
+
+  return data;
+}

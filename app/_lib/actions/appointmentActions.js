@@ -15,3 +15,15 @@ export async function createAppointment(appt) {
     throw new Error("Could not create appointment: ", error);
   }
 }
+
+export async function getAppointments() {
+  const { user } = await auth();
+  const { data, error } = await supabase.from("appointments").select("*").eq("user_id", user.id);
+
+  if (error) {
+    console.log(error);
+    throw new Error("Could not fetch appointments: ", error);
+  }
+
+  return data;
+}
