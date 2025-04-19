@@ -1,7 +1,6 @@
 "use client";
 
-import { useAppointments } from "@/app/_contexts/AppointmentContext";
-import { useEvents } from "@/app/_contexts/EventContext";
+import { useCalendar } from "@/app/_contexts/CalendarContext";
 import { useTasks } from "@/app/_contexts/TaskContext";
 import {
   CalendarIcon,
@@ -14,23 +13,10 @@ import {
 } from "@heroicons/react/24/outline";
 
 export default function ScheduleOverview() {
-  const { getTodaysTasks, toggleTaskCompletion } = useTasks();
-  const { events } = useEvents();
-  const { appointments } = useAppointments();
+  const { toggleTaskCompletion } = useTasks();
+  const { getTodaysSchedule } = useCalendar();
 
-  const todaysItems = [
-    ...getTodaysTasks().map((item) => ({ ...item, type: "task" })),
-    ...events
-      .filter((e) => new Date(e.startTime).toDateString() === new Date().toDateString())
-      .map((item) => ({ ...item, type: "event" })),
-    ...appointments
-      .filter((a) => new Date(a.date).toDateString() === new Date().toDateString())
-      .map((item) => ({ ...item, type: "appointment" })),
-  ].sort((a, b) => {
-    const dateA = new Date(a.dueDate || a.startTime || a.date);
-    const dateB = new Date(b.dueDate || b.startTime || b.date);
-    return dateA - dateB;
-  });
+  const todayList = getTodaysSchedule();
 
   const getItemIcon = (type) => {
     switch (type) {
@@ -60,8 +46,8 @@ export default function ScheduleOverview() {
       </div>
 
       <div className="divide-y divide-gray-100">
-        {todaysItems.length > 0 ? (
-          todaysItems.map((item) => (
+        {todayList.length > 0 ? (
+          todayList.map((item) => (
             <div
               key={item.id}
               className={`p-4 transition-colors ${

@@ -56,13 +56,6 @@ export function CalendarProvider({ children }) {
   const { events } = useEvents();
   const { appointments } = useAppointments();
 
-  const pathname = usePathname();
-
-  // useEffect(() => {
-  //   dispatch({ type: ACTIONS.RESET_FILTERS });
-  //   dispatch({ type: ACTIONS.SET_VIEW, payload: initialState.view });
-  // }, [pathname]);
-
   // Combine all schedule items when dependencies change
   useEffect(() => {
     const combined = [
@@ -84,6 +77,21 @@ export function CalendarProvider({ children }) {
 
     const resetFilters = () => {
       dispatch({ type: ACTIONS.RESET_FILTERS });
+    };
+
+    const getTodaysSchedule = () => {
+      const items = state.scheduleItems.filter(
+        (e) =>
+          new Date(e.dueDate || e.startTime || e.date).toDateString() === new Date().toDateString()
+      );
+
+      const todaysItems = items.sort((a, b) => {
+        const dateA = new Date(a.dueDate || a.startTime || a.date);
+        const dateB = new Date(b.dueDate || b.startTime || b.date);
+        return dateA - dateB;
+      });
+
+      return todaysItems;
     };
 
     // Filter schedule items by current view
@@ -140,9 +148,10 @@ export function CalendarProvider({ children }) {
       setDate,
       setView,
       resetCalendar,
-      getFilteredItems,
       setFilters,
       resetFilters,
+      getTodaysSchedule,
+      getFilteredItems,
     };
   }, [state]);
 
