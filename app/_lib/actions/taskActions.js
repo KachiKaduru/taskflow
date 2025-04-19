@@ -22,7 +22,7 @@ export async function getTasks() {
 
   if (error) {
     console.log(error);
-    throw new Error("Could not fetch tasks", error);
+    throw new Error("Could not fetch tasks: ", error);
   }
 
   return data;

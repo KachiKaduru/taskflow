@@ -1,5 +1,7 @@
 "use client";
+import { useQuery } from "@tanstack/react-query";
 import { createContext, useContext, useReducer, useMemo, useEffect } from "react";
+import { getEvents } from "../_lib/actions/eventActions";
 
 const ACTIONS = {
   LOAD_EVENTS: "LOAD_EVENTS",
@@ -54,11 +56,14 @@ export const EventContext = createContext();
 export function EventProvider({ children }) {
   const [state, dispatch] = useReducer(eventReducer, initialState);
 
+  const { data: fetchedEvents, isSuccess } = useQuery({
+    queryKey: ["events"],
+    queryFn: getEvents,
+  });
+
   useEffect(() => {
-    const stored = localStorage.getItem("events");
-    const parsed = stored ? JSON.parse(stored) : [];
-    dispatch({ type: ACTIONS.LOAD_EVENTS, payload: parsed });
-  }, []);
+    if (isSuccess) dispatch({ type: ACTIONS.LOAD_EVENTS, payload: fetchedEvents });
+  }, [isSuccess, fetchedEvents]);
 
   const value = useMemo(() => {
     const addEvent = (event) => {

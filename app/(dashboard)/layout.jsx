@@ -1,4 +1,3 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Header from "../_components/Header";
 import Sidebar from "../_components/Sidebar";
 import { AppointmentProvider } from "../_contexts/AppointmentContext";
@@ -7,7 +6,7 @@ import { EventProvider } from "../_contexts/EventContext";
 import { TaskProvider } from "../_contexts/TaskContext";
 import ClientProvider from "../_query/ClientProvider";
 
-export default function DashboardLayout({ children }) {
+export default async function DashboardLayout({ children }) {
   return (
     <ClientProvider>
       <TaskProvider>

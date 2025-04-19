@@ -1,6 +1,8 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { createContext, useContext, useReducer, useMemo, useEffect } from "react";
+import { getAppointments } from "../_lib/actions/appointmentActions";
 
 const ACTIONS = {
   LOAD_APPOINTMENTS: "LOAD_APPOINTMENTS",
@@ -54,12 +56,14 @@ export const AppointmentContext = createContext();
 
 export function AppointmentProvider({ children }) {
   const [state, dispatch] = useReducer(appointmentReducer, initialState);
+  const { data: fetchedAppts, isSuccess } = useQuery({
+    queryKey: ["appointments"],
+    queryFn: getAppointments,
+  });
 
   useEffect(() => {
-    const stored = localStorage.getItem("appointments");
-    const parsed = stored ? JSON.parse(stored) : [];
-    dispatch({ type: ACTIONS.LOAD_APPOINTMENTS, payload: parsed });
-  }, []);
+    if (isSuccess) dispatch({ type: ACTIONS.LOAD_APPOINTMENTS, payload: fetchedAppts });
+  }, [isSuccess, fetchedAppts]);
 
   const value = useMemo(() => {
     const addAppointment = (appointment) => {
