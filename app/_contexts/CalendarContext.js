@@ -1,8 +1,12 @@
 "use client";
 import { createContext, useContext, useReducer, useMemo, useEffect } from "react";
-import { useTasks } from "./TaskContext";
-import { useEvents } from "./EventContext";
-import { useAppointments } from "./AppointmentContext";
+// import { useTasks } from "./TaskContext";
+// import { useEvents } from "./EventContext";
+// import { useAppointments } from "./AppointmentContext";
+import { useQuery } from "@tanstack/react-query";
+import { getTasks } from "../_lib/actions/taskActions";
+import { getEvents } from "../_lib/actions/eventActions";
+import { getAppointments } from "../_lib/actions/appointmentActions";
 
 const ACTIONS = {
   SET_DATE: "SET_DATE",
@@ -49,28 +53,46 @@ function calendarReducer(state, action) {
 
 export const CalendarContext = createContext();
 
-export function CalendarProvider({ children, initialData }) {
+export function CalendarProvider({ children, fetchedData }) {
   const [state, dispatch] = useReducer(calendarReducer, initialState);
-  const { tasks } = useTasks();
-  const { events } = useEvents();
-  const { appointments } = useAppointments();
+  // const { tasks } = useTasks();
+  // const { events } = useEvents();
+  // const { appointments } = useAppointments();
 
-  const fetchedTasks = initialData?.tasks;
-  const fetchedEvents = initialData?.events;
-  const fetchedAppointments = initialData?.appointments;
+  const { data: tasks, isLoading: loadingTasks } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: getTasks,
+    initialData: fetchedData?.tasks,
+  });
+
+  const { data: events, isLoading: loadingEvents } = useQuery({
+    queryKey: ["events"],
+    queryFn: getEvents,
+    initialData: fetchedData?.events,
+  });
+
+  const { data: appointments, isLoading: loadingAppts } = useQuery({
+    queryKey: ["appointments"],
+    queryFn: getAppointments,
+    initialData: fetchedData?.appointments,
+  });
+
+  const fetchedTasks = fetchedData?.tasks;
+  const fetchedEvents = fetchedData?.events;
+  const fetchedAppointments = fetchedData?.appointments;
 
   // Combine all schedule items when dependencies change
   useEffect(() => {
     const combined = [
-      ...fetchedTasks.map((task) => ({ ...task, type: "task" })),
-      ...fetchedEvents.map((event) => ({ ...event, type: "event" })),
-      ...fetchedAppointments.map((appt) => ({ ...appt, type: "appointment" })),
-      // ...tasks.map((task) => ({ ...task, type: "task" })),
-      // ...events.map((event) => ({ ...event, type: "event" })),
-      // ...appointments.map((appt) => ({ ...appt, type: "appointment" })),
+      // ...fetchedTasks.map((task) => ({ ...task, type: "task" })),
+      // ...fetchedEvents.map((event) => ({ ...event, type: "event" })),
+      // ...fetchedAppointments.map((appt) => ({ ...appt, type: "appointment" })),
+      ...tasks.map((task) => ({ ...task, type: "task" })),
+      ...events.map((event) => ({ ...event, type: "event" })),
+      ...appointments.map((appt) => ({ ...appt, type: "appointment" })),
     ];
     dispatch({ type: ACTIONS.SET_SCHEDULE_ITEMS, payload: combined });
-  }, [fetchedTasks, fetchedEvents, fetchedAppointments]);
+  }, [tasks, events, appointments]);
 
   const value = useMemo(() => {
     const setDate = (date) => dispatch({ type: ACTIONS.SET_DATE, payload: date });

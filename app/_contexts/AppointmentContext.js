@@ -56,14 +56,15 @@ export const AppointmentContext = createContext();
 
 export function AppointmentProvider({ children }) {
   const [state, dispatch] = useReducer(appointmentReducer, initialState);
-  const { data: fetchedAppts, isSuccess } = useQuery({
-    queryKey: ["appointments"],
-    queryFn: getAppointments,
-  });
 
-  useEffect(() => {
-    if (isSuccess) dispatch({ type: ACTIONS.LOAD_APPOINTMENTS, payload: fetchedAppts });
-  }, [isSuccess, fetchedAppts]);
+  // const { data: fetchedAppts, isSuccess } = useQuery({
+  //   queryKey: ["appointments"],
+  //   queryFn: getAppointments,
+  // });
+
+  // useEffect(() => {
+  //   if (isSuccess) dispatch({ type: ACTIONS.LOAD_APPOINTMENTS, payload: fetchedAppts });
+  // }, [isSuccess, fetchedAppts]);
 
   const value = useMemo(() => {
     const addAppointment = (appointment) => {

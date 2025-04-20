@@ -25,8 +25,7 @@ export default function CreateAppointment({ onClose }) {
 
     try {
       await addAppointment(newAppointment);
-      await createAppointment(newAppointment);
-      await createGoogleEvent(newAppointment);
+      await Promise.all([createAppointment(newAppointment), createGoogleEvent(newAppointment)]);
       onClose();
     } catch (error) {
       throw new Error(error);

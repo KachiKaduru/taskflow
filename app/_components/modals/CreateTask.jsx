@@ -23,12 +23,10 @@ export default function CreateTask({ onClose }) {
       isRecurring: formData.get("isRecurring") === "on",
       recurrenceDays: parseInt(formData.get("recurrenceDays")) || 1,
     };
-    // console.log(newTask);
 
     try {
       await addTask(newTask);
-      await createTask(newTask);
-      await createGoogleTask(newTask);
+      await Promise.all([createTask(newTask), createGoogleTask(newTask)]);
 
       setIsRecurring(false);
       onClose();

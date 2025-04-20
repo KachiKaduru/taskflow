@@ -59,14 +59,14 @@ export const TaskContext = createContext();
 
 export function TaskProvider({ children }) {
   const [state, dispatch] = useReducer(taskReducer, initialState);
-  const { data: fetchedTasks, isSuccess } = useQuery({
-    queryKey: ["tasks"],
-    queryFn: getTasks,
-  });
+  // const { data: fetchedTasks, isSuccess } = useQuery({
+  //   queryKey: ["tasks"],
+  //   queryFn: getTasks,
+  // });
 
-  useEffect(() => {
-    if (isSuccess) dispatch({ type: ACTIONS.LOAD_TASKS, payload: fetchedTasks });
-  }, [isSuccess, fetchedTasks]);
+  // useEffect(() => {
+  //   if (isSuccess) dispatch({ type: ACTIONS.LOAD_TASKS, payload: fetchedTasks });
+  // }, [isSuccess, fetchedTasks]);
 
   const value = useMemo(() => {
     const addTask = (task) => {

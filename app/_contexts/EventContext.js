@@ -56,14 +56,14 @@ export const EventContext = createContext();
 export function EventProvider({ children }) {
   const [state, dispatch] = useReducer(eventReducer, initialState);
 
-  const { data: fetchedEvents, isSuccess } = useQuery({
-    queryKey: ["events"],
-    queryFn: getEvents,
-  });
+  // const { data: fetchedEvents, isSuccess } = useQuery({
+  //   queryKey: ["events"],
+  //   queryFn: getEvents,
+  // });
 
-  useEffect(() => {
-    if (isSuccess) dispatch({ type: ACTIONS.LOAD_EVENTS, payload: fetchedEvents });
-  }, [isSuccess, fetchedEvents]);
+  // useEffect(() => {
+  //   if (isSuccess) dispatch({ type: ACTIONS.LOAD_EVENTS, payload: fetchedEvents });
+  // }, [isSuccess, fetchedEvents]);
 
   const value = useMemo(() => {
     const addEvent = (event) => {

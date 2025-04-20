@@ -1,7 +1,7 @@
 import ClientProvider from "../_providers/ClientProvider";
-
 import Header from "../_components/Header";
 import Sidebar from "../_components/Sidebar";
+
 import { getTasks } from "../_lib/actions/taskActions";
 import { getEvents } from "../_lib/actions/eventActions";
 import { getAppointments } from "../_lib/actions/appointmentActions";
@@ -16,7 +16,7 @@ export default async function DashboardLayout({ children }) {
   // console.log("1.", tasks, "2.", events, "3.", appointments);
 
   return (
-    <ClientProvider initialData={{ tasks, events, appointments }}>
+    <ClientProvider fetchedData={{ tasks, events, appointments }}>
       <section className="h-[100dvh] bg-gradient-to-br from-blue-50 to-indigo-50 grid grid-cols-1 grid-rows-[1fr_auto] sm:grid-cols-[auto_1fr] sm:grid-rows-1">
         <Sidebar />
 

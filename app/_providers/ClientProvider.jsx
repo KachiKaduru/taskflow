@@ -10,13 +10,13 @@ import { CalendarProvider } from "../_contexts/CalendarContext";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 0,
-      // staleTime: 60 * 1000,
+      // staleTime: 0,
+      staleTime: 60 * 1000,
     },
   },
 });
 
-export default function ClientProvider({ children, initialData }) {
+export default function ClientProvider({ children, fetchedData }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
@@ -24,7 +24,7 @@ export default function ClientProvider({ children, initialData }) {
       <TaskProvider>
         <EventProvider>
           <AppointmentProvider>
-            <CalendarProvider initialData={initialData}>{children}</CalendarProvider>
+            <CalendarProvider fetchedData={fetchedData}>{children}</CalendarProvider>
           </AppointmentProvider>
         </EventProvider>
       </TaskProvider>

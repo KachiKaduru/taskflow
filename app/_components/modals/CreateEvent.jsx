@@ -25,8 +25,7 @@ export default function CreateEvent({ onClose }) {
 
     try {
       await addEvent(newEvent);
-      await createEvent(newEvent);
-      await createGoogleEvent(newEvent);
+      await Promise.all([createEvent(newEvent), createGoogleEvent(newEvent)]);
       onClose();
     } catch (error) {
       throw new Error(error);

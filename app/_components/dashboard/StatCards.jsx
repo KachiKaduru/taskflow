@@ -1,18 +1,18 @@
 "use client";
 
 import { useCalendar } from "@/app/_contexts/CalendarContext";
-import { CalendarIcon } from "@heroicons/react/24/outline";
+import { CalendarDaysIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import { UserGroupIcon } from "@heroicons/react/24/solid";
 
 export default function StatCards() {
-  const { getTodaysSchedule, upcomingEvents } = useCalendar();
+  const { getTodaysSchedule, upcomingEvents, scheduleItems } = useCalendar();
   const todaysAgenda = getTodaysSchedule();
 
   const statInfo = [
     {
       id: 1,
       title: "Today's Agenda",
-      icon: CalendarIcon,
+      icon: CalendarDaysIcon,
       colors: "bg-green-50 text-green-600",
       data: todaysAgenda.length,
     },
@@ -23,10 +23,17 @@ export default function StatCards() {
       colors: "bg-indigo-50 text-indigo-600",
       data: upcomingEvents.length,
     },
+    {
+      id: 3,
+      title: "Total Activities",
+      icon: ClipboardDocumentIcon,
+      colors: "bg-blue-50 text-blue-600",
+      data: scheduleItems.length,
+    },
   ];
 
   return (
-    <section className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <section className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {statInfo.map((stat) => (
         <Card key={stat.id} stat={stat} />
       ))}
