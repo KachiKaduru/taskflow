@@ -1,15 +1,31 @@
 "use client";
 
-import { useAppointments } from "@/app/_contexts/AppointmentContext";
-import FormLabel from "../form/FormLabel";
-import { getCurrentTime, getDate } from "@/app/_lib/helpers";
-import { createGoogleEvent } from "@/app/_lib/googleCalendar";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createAppointment } from "@/app/_lib/actions/appointmentActions";
+import { createGoogleEvent } from "@/app/_lib/googleCalendar";
+import { getCurrentTime, getDate } from "@/app/_lib/helpers";
+
+import FormLabel from "../form/FormLabel";
+import SubmitButton from "../ui/SubmitButton";
 
 export default function CreateAppointment({ onClose }) {
-  const { addAppointment } = useAppointments();
   const currentTime = getCurrentTime();
   const todaysDate = getDate();
+
+  const queryClient = useQueryClient();
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: async (newAppt) => {
+      await Promise.all([createAppointment(newAppt), createGoogleEvent(newAppt)]);
+    },
+    onSuccess: (newAppt) => {
+      queryClient.invalidateQueries(["appointments"]);
+      onClose();
+    },
+    onError: (error) => {
+      throw new Error("Error creating appointment: ", error);
+    },
+  });
 
   const handleSubmit = async (formData) => {
     const newAppointment = {
@@ -23,13 +39,7 @@ export default function CreateAppointment({ onClose }) {
       id: Date.now(),
     };
 
-    try {
-      await addAppointment(newAppointment);
-      await Promise.all([createAppointment(newAppointment), createGoogleEvent(newAppointment)]);
-      onClose();
-    } catch (error) {
-      throw new Error(error);
-    }
+    mutate(newAppointment);
   };
 
   return (
@@ -107,9 +117,7 @@ export default function CreateAppointment({ onClose }) {
         <textarea name="notes" rows={2} className="w-full p-2 border rounded-lg" />
       </div>
 
-      <button type="submit" className="w-full bg-teal-600 text-white py-3 px-4 rounded-lg mt-4">
-        Schedule Appointment
-      </button>
+      <SubmitButton buttonFor="Appointment" color="teal" isLoading={isPending} />
     </form>
   );
 }

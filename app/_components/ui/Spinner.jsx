@@ -12,6 +12,7 @@ const Spinner = ({ size = "md", color = "gray" }) => {
     blue: "border-blue-500 border-t-blue-200",
     gray: "border-gray-500 border-t-gray-200",
     green: "border-green-500 border-t-green-200",
+    teal: "border-teal-500 border-t-teal-200",
     red: "border-red-500 border-t-red-200",
     yellow: "border-yellow-500 border-t-yellow-200",
     indigo: "border-indigo-500 border-t-indigo-200",

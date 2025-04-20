@@ -1,15 +1,30 @@
 "use client";
 
-import { useTasks } from "@/app/_contexts/TaskContext";
 import { useState } from "react";
 import FormLabel from "../form/FormLabel";
 import { getCurrentTime } from "@/app/_lib/helpers";
 import { createGoogleTask } from "@/app/_lib/googleCalendar";
 import { createTask } from "@/app/_lib/actions/taskActions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import SubmitButton from "../ui/SubmitButton";
 
 export default function CreateTask({ onClose }) {
-  const { addTask } = useTasks();
+  const queryClient = useQueryClient();
   const [isRecurring, setIsRecurring] = useState(false);
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: async (newTask) => {
+      await Promise.all([createTask(newTask), createGoogleTask(newTask)]);
+    },
+    onSuccess: (newTask) => {
+      queryClient.invalidateQueries(["tasks"]);
+      onClose();
+      setIsRecurring(false);
+    },
+    onError: (error) => {
+      throw new Error("Error creating task: ", error);
+    },
+  });
 
   const handleSubmit = async (formData) => {
     const newTask = {
@@ -24,17 +39,10 @@ export default function CreateTask({ onClose }) {
       recurrenceDays: parseInt(formData.get("recurrenceDays")) || 1,
     };
 
-    try {
-      await addTask(newTask);
-      await Promise.all([createTask(newTask), createGoogleTask(newTask)]);
-
-      setIsRecurring(false);
-      onClose();
-    } catch (e) {
-      console.log(e);
-    }
+    mutate(newTask);
   };
 
+  console.log(isPending);
   return (
     <form action={handleSubmit} className="p-2 space-y-4">
       <div>
@@ -101,9 +109,7 @@ export default function CreateTask({ onClose }) {
         <label htmlFor="priority">Priority Task</label>
       </fieldset>
 
-      <button type="submit" className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg mt-4">
-        Add Task
-      </button>
+      <SubmitButton buttonFor="Task" color="blue" isLoading={isPending} />
     </form>
   );
 }

@@ -1,15 +1,31 @@
 "use client";
 
-import { useEvents } from "@/app/_contexts/EventContext";
-import FormLabel from "../form/FormLabel";
-import { getCurrentTime, getDate } from "@/app/_lib/helpers";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createGoogleEvent } from "@/app/_lib/googleCalendar";
 import { createEvent } from "@/app/_lib/actions/eventActions";
+import { getCurrentTime, getDate } from "@/app/_lib/helpers";
+
+import FormLabel from "../form/FormLabel";
+import SubmitButton from "../ui/SubmitButton";
 
 export default function CreateEvent({ onClose }) {
-  const { addEvent } = useEvents();
   const currentTime = getCurrentTime();
   const todaysDate = getDate();
+
+  const queryClient = useQueryClient();
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: async (newEvent) => {
+      await Promise.all([createEvent(newEvent), createGoogleEvent(newEvent)]);
+    },
+    onSuccess: (newEvent) => {
+      queryClient.invalidateQueries(["events"]);
+      onClose();
+    },
+    onError: (error) => {
+      throw new Error("Error creating event: ", error);
+    },
+  });
 
   const handleSubmit = async (formData) => {
     const newEvent = {
@@ -23,13 +39,7 @@ export default function CreateEvent({ onClose }) {
       id: Date.now(),
     };
 
-    try {
-      await addEvent(newEvent);
-      await Promise.all([createEvent(newEvent), createGoogleEvent(newEvent)]);
-      onClose();
-    } catch (error) {
-      throw new Error(error);
-    }
+    mutate(newEvent);
   };
 
   return (
@@ -104,9 +114,7 @@ export default function CreateEvent({ onClose }) {
         <label htmlFor="virtual">Virtual Event</label>
       </div>
 
-      <button type="submit" className="w-full bg-purple-600 text-white py-3 px-4 rounded-lg mt-4">
-        Create Event
-      </button>
+      <SubmitButton buttonFor="Event" color="purple" isLoading={isPending} />
     </form>
   );
 }
