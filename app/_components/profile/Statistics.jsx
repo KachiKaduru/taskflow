@@ -9,28 +9,32 @@ import {
   RocketLaunchIcon,
 } from "@heroicons/react/24/outline";
 import ActivityGraph from "../ui/ActivityGraph";
-import { useTasks } from "@/app/_contexts/TaskContext";
-import { useEvents } from "@/app/_contexts/EventContext";
-import { useAppointments } from "@/app/_contexts/AppointmentContext";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
+
 import { useCalendar } from "@/app/_contexts/CalendarContext";
 import { useScheduleMetrics } from "@/app/_hooks/useScheduleMetrics";
 import { AverageIcon, PriorityIcon, TotalActivitiesIcon } from "../_icons/icons";
 
 export default function Statistics() {
-  const { tasks, getCompletionRate } = useTasks();
-  const { events } = useEvents();
-  const { appointments } = useAppointments();
-  const { scheduleItems } = useCalendar();
+  const { scheduleItems, upcomingEvents } = useCalendar();
   const { completedTasks } = useScheduleMetrics();
 
+  const tasks = scheduleItems.map((item) => item.type === "task");
+  const events = scheduleItems.map((item) => item.type === "event");
+  const appointments = scheduleItems.map((item) => item.type === "appointment");
+
   const stats = useMemo(() => {
+    const completionRate = () => {
+      if (tasks.length === 0) return 0;
+      const completed = tasks.filter((task) => task.isCompleted).length;
+      return Math.round((completed / tasks.length) * 100);
+    };
+
     // Task Metrics
-    const priorityTasks = tasks.filter((t) => t.isPriority).length;
-    const taskCompletionRate = getCompletionRate();
+    const priorityTasks = tasks.filter((item) => item.isPriority).length;
+    const taskCompletionRate = completionRate();
 
     // Event Metrics
-    const upcomingEvents = events.filter((e) => new Date(e.startTime) > new Date()).length;
 
     // Appointment Metrics
     const completedAppointments = appointments.filter((a) => new Date(a.date) < new Date()).length;
@@ -41,7 +45,7 @@ export default function Statistics() {
       Math.round(
         taskCompletionRate * 0.6 +
           (completedAppointments / Math.max(1, appointments.length)) * 30 +
-          (upcomingEvents > 0 ? 10 : 0)
+          (upcomingEvents.length > 0 ? 10 : 0)
       )
     );
 
@@ -59,7 +63,7 @@ export default function Statistics() {
       totalActivities: scheduleItems.length,
       weeklyAverage: calculateWeeklyAverage(tasks, events, appointments),
     };
-  }, [tasks, events, appointments, scheduleItems]);
+  }, [scheduleItems]);
 
   const statisticsArray = [
     { value: stats.tasksCompleted, label: "Tasks Done", color: "blue", icon: CheckCircleIcon },

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCalendar } from "@/app/_contexts/CalendarContext";
-import { useTasks } from "@/app/_contexts/TaskContext";
 import {
   CalendarIcon,
   CheckIcon,
@@ -13,7 +12,6 @@ import {
 } from "@heroicons/react/24/outline";
 
 export default function ScheduleOverview() {
-  const { toggleTaskCompletion } = useTasks();
   const { getTodaysSchedule } = useCalendar();
 
   const todayList = getTodaysSchedule();
@@ -58,7 +56,6 @@ export default function ScheduleOverview() {
                 {/* Interactive Element */}
                 {item.type === "task" ? (
                   <button
-                    onClick={() => toggleTaskCompletion(item.id)}
                     className={`mt-1 flex-shrink-0 h-5 w-5 rounded border ${
                       item.isCompleted
                         ? "bg-green-500 border-green-500 text-white"

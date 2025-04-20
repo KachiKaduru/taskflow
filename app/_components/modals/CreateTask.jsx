@@ -42,7 +42,6 @@ export default function CreateTask({ onClose }) {
     mutate(newTask);
   };
 
-  console.log(isPending);
   return (
     <form action={handleSubmit} className="p-2 space-y-4">
       <div>

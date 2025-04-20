@@ -1,11 +1,8 @@
 "use client";
 
-import { TrashIcon, CheckCircleIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-import { useTasks } from "@/app/_contexts/TaskContext";
+import { CheckCircleIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 
 export default function TaskCard({ task }) {
-  const { deleteTask, toggleTaskCompletion } = useTasks();
-
   return (
     <div className="p-4 hover:bg-gray-50 group transition-colors">
       <div className="flex items-start gap-3">
@@ -58,7 +55,6 @@ export default function TaskCard({ task }) {
             )}
 
             <button
-              onClick={() => toggleTaskCompletion(task.id)}
               className={`flex items-center gap-1 ${
                 task.isCompleted ? "text-green-600" : "text-gray-400 hover:text-blue-600"
               }`}

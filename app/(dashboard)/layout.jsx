@@ -13,8 +13,6 @@ export default async function DashboardLayout({ children }) {
     getAppointments(),
   ]);
 
-  // console.log("1.", tasks, "2.", events, "3.", appointments);
-
   return (
     <ClientProvider fetchedData={{ tasks, events, appointments }}>
       <section className="h-[100dvh] bg-gradient-to-br from-blue-50 to-indigo-50 grid grid-cols-1 grid-rows-[1fr_auto] sm:grid-cols-[auto_1fr] sm:grid-rows-1">

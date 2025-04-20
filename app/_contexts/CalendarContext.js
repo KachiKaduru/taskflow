@@ -1,8 +1,6 @@
 "use client";
 import { createContext, useContext, useReducer, useMemo, useEffect } from "react";
-// import { useTasks } from "./TaskContext";
-// import { useEvents } from "./EventContext";
-// import { useAppointments } from "./AppointmentContext";
+
 import { useQuery } from "@tanstack/react-query";
 import { getTasks } from "../_lib/actions/taskActions";
 import { getEvents } from "../_lib/actions/eventActions";
@@ -55,9 +53,6 @@ export const CalendarContext = createContext();
 
 export function CalendarProvider({ children, fetchedData }) {
   const [state, dispatch] = useReducer(calendarReducer, initialState);
-  // const { tasks } = useTasks();
-  // const { events } = useEvents();
-  // const { appointments } = useAppointments();
 
   const { data: tasks, isLoading: loadingTasks } = useQuery({
     queryKey: ["tasks"],
