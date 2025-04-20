@@ -49,21 +49,28 @@ function calendarReducer(state, action) {
 
 export const CalendarContext = createContext();
 
-export function CalendarProvider({ children }) {
+export function CalendarProvider({ children, initialData }) {
   const [state, dispatch] = useReducer(calendarReducer, initialState);
   const { tasks } = useTasks();
   const { events } = useEvents();
   const { appointments } = useAppointments();
 
+  const fetchedTasks = initialData?.tasks;
+  const fetchedEvents = initialData?.events;
+  const fetchedAppointments = initialData?.appointments;
+
   // Combine all schedule items when dependencies change
   useEffect(() => {
     const combined = [
-      ...tasks.map((task) => ({ ...task, type: "task" })),
-      ...events.map((event) => ({ ...event, type: "event" })),
-      ...appointments.map((appt) => ({ ...appt, type: "appointment" })),
+      ...fetchedTasks.map((task) => ({ ...task, type: "task" })),
+      ...fetchedEvents.map((event) => ({ ...event, type: "event" })),
+      ...fetchedAppointments.map((appt) => ({ ...appt, type: "appointment" })),
+      // ...tasks.map((task) => ({ ...task, type: "task" })),
+      // ...events.map((event) => ({ ...event, type: "event" })),
+      // ...appointments.map((appt) => ({ ...appt, type: "appointment" })),
     ];
     dispatch({ type: ACTIONS.SET_SCHEDULE_ITEMS, payload: combined });
-  }, [tasks, events, appointments]);
+  }, [fetchedTasks, fetchedEvents, fetchedAppointments]);
 
   const value = useMemo(() => {
     const setDate = (date) => dispatch({ type: ACTIONS.SET_DATE, payload: date });
