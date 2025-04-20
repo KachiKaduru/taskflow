@@ -1,19 +1,10 @@
 "use client";
-import { useAppointments } from "@/app/_contexts/AppointmentContext";
-import { useEvents } from "@/app/_contexts/EventContext";
+
+import { useCalendar } from "@/app/_contexts/CalendarContext";
 import { CalendarIcon, VideoCameraIcon, UserIcon } from "@heroicons/react/24/outline";
 
 export default function UpcomingEvents() {
-  const { events } = useEvents();
-  const { appointments } = useAppointments();
-
-  const upcomingItems = [
-    ...events.map((e) => ({ ...e, type: "event" })),
-    ...appointments.map((a) => ({ ...a, type: "appointment" })),
-  ]
-    .filter((item) => new Date(item.startTime || item.date) > new Date())
-    .sort((a, b) => new Date(a.startTime || a.date) - new Date(b.startTime || b.date))
-    .slice(0, 5); // Top 5 soonest
+  const { upcomingEvents } = useCalendar();
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
@@ -25,8 +16,8 @@ export default function UpcomingEvents() {
       </div>
 
       <div className="divide-y divide-gray-100">
-        {upcomingItems.length > 0 ? (
-          upcomingItems.map((item) => (
+        {upcomingEvents.length > 0 ? (
+          upcomingEvents.map((item) => (
             <div key={item.id} className="p-4 hover:bg-gray-50 transition-colors">
               <div className="flex items-start gap-3">
                 <div
@@ -66,7 +57,7 @@ export default function UpcomingEvents() {
         )}
       </div>
 
-      {upcomingItems.length > 0 && (
+      {upcomingEvents.length > 0 && (
         <div className="p-4 text-center border-t border-gray-100">
           <button className="text-sm text-indigo-600 hover:text-indigo-800">
             View All Events →

@@ -18,17 +18,17 @@ export default function DashboardPage() {
       </PageHeader>
 
       {/* Top Stats Row */}
-      <StatCards />
 
       {/* Main Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <StatCards />
         {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
           <ScheduleOverview />
           <ProductivityChart />
         </div>
 
-        <div className="space-y-6">
+        <div className=" space-y-6">
           <UpcomingEvents />
           <QuickAddSection />
         </div>

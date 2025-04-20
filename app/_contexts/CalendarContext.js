@@ -3,7 +3,6 @@ import { createContext, useContext, useReducer, useMemo, useEffect } from "react
 import { useTasks } from "./TaskContext";
 import { useEvents } from "./EventContext";
 import { useAppointments } from "./AppointmentContext";
-import { usePathname } from "next/navigation";
 
 const ACTIONS = {
   SET_DATE: "SET_DATE",
@@ -143,6 +142,14 @@ export function CalendarProvider({ children }) {
         });
     };
 
+    const upcomingEvents = [
+      ...state.scheduleItems
+        .filter((item) => item.type === "event" || item.type === "appointment")
+        .filter((item) => new Date(item.startTime || item.date) > new Date())
+        .sort((a, b) => new Date(a.startTime || a.date) - new Date(b.startTime || b.date))
+        .slice(0, 5),
+    ]; // Top 5 soonest
+
     return {
       ...state,
       setDate,
@@ -152,6 +159,7 @@ export function CalendarProvider({ children }) {
       resetFilters,
       getTodaysSchedule,
       getFilteredItems,
+      upcomingEvents,
     };
   }, [state]);
 
