@@ -18,7 +18,6 @@ export default function ClientProvider({ children, fetchedData }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
-
       <CalendarProvider fetchedData={fetchedData}>{children}</CalendarProvider>
     </QueryClientProvider>
   );

@@ -79,9 +79,6 @@ export function CalendarProvider({ children, fetchedData }) {
   // Combine all schedule items when dependencies change
   useEffect(() => {
     const combined = [
-      // ...fetchedTasks.map((task) => ({ ...task, type: "task" })),
-      // ...fetchedEvents.map((event) => ({ ...event, type: "event" })),
-      // ...fetchedAppointments.map((appt) => ({ ...appt, type: "appointment" })),
       ...tasks.map((task) => ({ ...task, type: "task" })),
       ...events.map((event) => ({ ...event, type: "event" })),
       ...appointments.map((appt) => ({ ...appt, type: "appointment" })),
