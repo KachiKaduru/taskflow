@@ -24,11 +24,14 @@ export default function DashboardPage() {
         {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
           <ScheduleOverview />
-          <ProductivityChart />
         </div>
 
         <div className=" space-y-6">
           <UpcomingEvents />
+        </div>
+
+        <div className="lg:col-span-3">
+          <ProductivityChart />
         </div>
       </div>
     </div>

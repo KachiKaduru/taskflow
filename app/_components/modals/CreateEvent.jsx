@@ -7,6 +7,7 @@ import { getCurrentTime, getDate } from "@/app/_lib/helpers";
 
 import FormLabel from "../form/FormLabel";
 import SubmitButton from "../ui/SubmitButton";
+import toast from "react-hot-toast";
 
 export default function CreateEvent({ onClose }) {
   const currentTime = getCurrentTime();
@@ -30,35 +31,27 @@ export default function CreateEvent({ onClose }) {
   const { isPending, mutate } = useMutation({
     mutationFn: async (newEvent) => {
       await Promise.all([createEvent(newEvent), createGoogleEvent(newEvent)]);
-      return newEvent; // Return the task so we can use it in onSuccess
+      return newEvent;
     },
-    // Optimistically update the cache
     onMutate: async (newEvent) => {
-      // Cancel any outgoing refetches
       await queryClient.cancelQueries(["events"]);
-
-      // Snapshot the previous value
       const previousEvents = queryClient.getQueryData(["events"]) || [];
-
-      // Optimistically update to the new value
       queryClient.setQueryData(["events"], [...previousEvents, newEvent]);
-
       onClose();
 
-      // Return context with the snapshotted value
       return { previousEvents };
     },
     // If the mutation fails, roll back
     onError: (err, newEvent, context) => {
       queryClient.setQueryData(["events"], context.previousEvents);
-      // Consider showing a toast notification here
-      console.error("Error creating appointment: ", err);
+      toast.error("Error creating event :(");
     },
-    // Always refetch after error or success
     onSettled: () => {
       queryClient.invalidateQueries(["events"]);
     },
-    onSuccess: () => {},
+    onSuccess: () => {
+      toast.success("Event created!");
+    },
   });
 
   const handleSubmit = async (formData) => {

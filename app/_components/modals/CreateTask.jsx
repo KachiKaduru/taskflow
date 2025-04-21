@@ -7,6 +7,7 @@ import { createGoogleTask } from "@/app/_lib/googleCalendar";
 import { createTask } from "@/app/_lib/actions/taskActions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import SubmitButton from "../ui/SubmitButton";
+import toast from "react-hot-toast";
 
 export default function CreateTask({ onClose }) {
   const queryClient = useQueryClient();
@@ -29,35 +30,26 @@ export default function CreateTask({ onClose }) {
   const { isPending, mutate } = useMutation({
     mutationFn: async (newTask) => {
       await Promise.all([createTask(newTask), createGoogleTask(newTask)]);
-      return newTask; // Return the task so we can use it in onSuccess
+      return newTask;
     },
-    // Optimistically update the cache
     onMutate: async (newTask) => {
-      // Cancel any outgoing refetches
       await queryClient.cancelQueries(["tasks"]);
-
-      // Snapshot the previous value
       const previousTasks = queryClient.getQueryData(["tasks"]) || [];
-
-      // Optimistically update to the new value
       queryClient.setQueryData(["tasks"], [...previousTasks, newTask]);
-
       onClose();
 
-      // Return context with the snapshotted value
       return { previousTasks };
     },
     // If the mutation fails, roll back
     onError: (err, newTask, context) => {
       queryClient.setQueryData(["tasks"], context.previousTasks);
-      // Consider showing a toast notification here
-      console.error("Error creating task:", err);
+      toast.error("Error creating task :(");
     },
-    // Always refetch after error or success
     onSettled: () => {
       queryClient.invalidateQueries(["tasks"]);
     },
     onSuccess: () => {
+      toast.success("Task created!");
       setIsRecurring(false);
     },
   });

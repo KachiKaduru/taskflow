@@ -3,13 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
-import {
-  HomeIcon,
-  CalendarIcon,
-  ListBulletIcon,
-  UserIcon,
-  Cog6ToothIcon,
-} from "@heroicons/react/24/outline";
+import { HomeIcon, CalendarIcon, UserIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { QueueListIcon } from "@heroicons/react/24/solid";
 
 export default function Sidebar() {
@@ -17,7 +11,6 @@ export default function Sidebar() {
 
   const sidebarMenu = [
     { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
-    // { name: "Tasks", href: "/tasks", icon: ListBulletIcon },
     { name: "Schedule", href: "/schedule", icon: QueueListIcon },
     { name: "Calendar", href: "/calendar", icon: CalendarIcon },
     { name: "Profile", href: "/profile", icon: UserIcon },
@@ -40,9 +33,9 @@ export default function Sidebar() {
             }`}
           >
             <item.icon
-              className={`h-5 w-5 mx-auto sm:mr-3 sm:mx-0 text-gray-400 group-hover:text-blue-500 ${
-                pathname === item.href ? "text-blue-600" : ""
-              }`}
+              className={`h-5 w-5 mx-auto sm:mr-3 sm:mx-0 ${
+                pathname === item.href ? "text-blue-600" : "text-gray-400"
+              } group-hover:text-blue-500 `}
             />
             <span className="font-medium text-xs sm:text-base">{item.name}</span>
           </Link>

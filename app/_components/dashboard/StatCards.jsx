@@ -33,7 +33,7 @@ export default function StatCards() {
   ];
 
   return (
-    <section className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <section className="lg:col-span-3 grid grid-cols-1 max-[480px]:grid-cols-1 max-[640px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
       {statInfo.map((stat) => (
         <Card key={stat.id} stat={stat} />
       ))}

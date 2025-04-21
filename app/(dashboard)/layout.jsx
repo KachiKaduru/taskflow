@@ -5,6 +5,7 @@ import Sidebar from "../_components/Sidebar";
 import { getTasks } from "../_lib/actions/taskActions";
 import { getEvents } from "../_lib/actions/eventActions";
 import { getAppointments } from "../_lib/actions/appointmentActions";
+import { Toaster } from "react-hot-toast";
 
 export default async function DashboardLayout({ children }) {
   const [tasks, events, appointments] = await Promise.all([
@@ -23,6 +24,16 @@ export default async function DashboardLayout({ children }) {
 
           <main className="flex-1 overflow-y-auto p-4 sm:p-6">
             <div className="max-w-7xl mx-auto">{children}</div>
+            <Toaster
+              position="top-center"
+              gutter={12}
+              containerClassName="p-2"
+              toastOptions={{
+                success: { duration: 3000 },
+                error: { duration: 4000 },
+                style: { fontSize: "16px", maxWidth: "500px" },
+              }}
+            />
           </main>
         </div>
       </section>
