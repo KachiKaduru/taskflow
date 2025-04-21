@@ -12,17 +12,53 @@ export default function CreateTask({ onClose }) {
   const queryClient = useQueryClient();
   const [isRecurring, setIsRecurring] = useState(false);
 
+  // const { isPending, mutate } = useMutation({
+  //   mutationFn: async (newTask) => {
+  //     await Promise.all([createTask(newTask), createGoogleTask(newTask)]);
+  //   },
+  //   onSuccess: (newTask) => {
+  //     queryClient.invalidateQueries(["tasks"]);
+  //     onClose();
+  //     setIsRecurring(false);
+  //   },
+  //   onError: (error) => {
+  //     throw new Error("Error creating task: ", error);
+  //   },
+  // });
+
   const { isPending, mutate } = useMutation({
     mutationFn: async (newTask) => {
       await Promise.all([createTask(newTask), createGoogleTask(newTask)]);
+      return newTask; // Return the task so we can use it in onSuccess
     },
-    onSuccess: (newTask) => {
-      queryClient.invalidateQueries(["tasks"]);
+    // Optimistically update the cache
+    onMutate: async (newTask) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries(["tasks"]);
+
+      // Snapshot the previous value
+      const previousTasks = queryClient.getQueryData(["tasks"]) || [];
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(["tasks"], [...previousTasks, newTask]);
+
       onClose();
-      setIsRecurring(false);
+
+      // Return context with the snapshotted value
+      return { previousTasks };
     },
-    onError: (error) => {
-      throw new Error("Error creating task: ", error);
+    // If the mutation fails, roll back
+    onError: (err, newTask, context) => {
+      queryClient.setQueryData(["tasks"], context.previousTasks);
+      // Consider showing a toast notification here
+      console.error("Error creating task:", err);
+    },
+    // Always refetch after error or success
+    onSettled: () => {
+      queryClient.invalidateQueries(["tasks"]);
+    },
+    onSuccess: () => {
+      setIsRecurring(false);
     },
   });
 

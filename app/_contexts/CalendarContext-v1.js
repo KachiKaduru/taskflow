@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useReducer, useMemo } from "react";
+import { createContext, useContext, useReducer, useMemo, useEffect } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { getTasks } from "../_lib/actions/taskActions";
@@ -54,23 +54,37 @@ export const CalendarContext = createContext();
 export function CalendarProvider({ children, fetchedData }) {
   const [state, dispatch] = useReducer(calendarReducer, initialState);
 
-  const { data: tasks = [] } = useQuery({
+  const { data: tasks, isLoading: loadingTasks } = useQuery({
     queryKey: ["tasks"],
     queryFn: getTasks,
     initialData: fetchedData?.tasks,
   });
 
-  const { data: events = [] } = useQuery({
+  const { data: events, isLoading: loadingEvents } = useQuery({
     queryKey: ["events"],
     queryFn: getEvents,
     initialData: fetchedData?.events,
   });
 
-  const { data: appointments = [] } = useQuery({
+  const { data: appointments, isLoading: loadingAppts } = useQuery({
     queryKey: ["appointments"],
     queryFn: getAppointments,
     initialData: fetchedData?.appointments,
   });
+
+  const fetchedTasks = fetchedData?.tasks;
+  const fetchedEvents = fetchedData?.events;
+  const fetchedAppointments = fetchedData?.appointments;
+
+  // Combine all schedule items when dependencies change
+  useEffect(() => {
+    const combined = [
+      ...tasks.map((task) => ({ ...task, type: "task" })),
+      ...events.map((event) => ({ ...event, type: "event" })),
+      ...appointments.map((appt) => ({ ...appt, type: "appointment" })),
+    ];
+    dispatch({ type: ACTIONS.SET_SCHEDULE_ITEMS, payload: combined });
+  }, [tasks, events, appointments]);
 
   const value = useMemo(() => {
     const setDate = (date) => dispatch({ type: ACTIONS.SET_DATE, payload: date });
@@ -85,14 +99,8 @@ export function CalendarProvider({ children, fetchedData }) {
       dispatch({ type: ACTIONS.RESET_FILTERS });
     };
 
-    const scheduleItems = [
-      ...tasks.map((task) => ({ ...task, type: "task" })),
-      ...events.map((event) => ({ ...event, type: "event" })),
-      ...appointments.map((appt) => ({ ...appt, type: "appointment" })),
-    ];
-
     const getTodaysSchedule = () => {
-      const items = scheduleItems.filter(
+      const items = state.scheduleItems.filter(
         (e) =>
           new Date(e.dueDate || e.startTime || e.date).toDateString() === new Date().toDateString()
       );
@@ -108,7 +116,7 @@ export function CalendarProvider({ children, fetchedData }) {
 
     // Filter schedule items by current view
     const getFilteredItems = () => {
-      return scheduleItems
+      return state.scheduleItems
         .filter((item) => {
           const itemDate = new Date(item.date || item.dueDate || item.startTime);
 
@@ -155,11 +163,13 @@ export function CalendarProvider({ children, fetchedData }) {
         });
     };
 
-    const upcomingEvents = scheduleItems
-      .filter((item) => item.type === "event" || item.type === "appointment")
-      .filter((item) => new Date(item.startTime || item.date) > new Date())
-      .sort((a, b) => new Date(a.startTime || a.date) - new Date(b.startTime || b.date))
-      .slice(0, 5);
+    const upcomingEvents = [
+      ...state.scheduleItems
+        .filter((item) => item.type === "event" || item.type === "appointment")
+        .filter((item) => new Date(item.startTime || item.date) > new Date())
+        .sort((a, b) => new Date(a.startTime || a.date) - new Date(b.startTime || b.date))
+        .slice(0, 5),
+    ]; // Top 5 soonest
 
     return {
       ...state,
@@ -168,12 +178,11 @@ export function CalendarProvider({ children, fetchedData }) {
       resetCalendar,
       setFilters,
       resetFilters,
-      scheduleItems,
       getTodaysSchedule,
       getFilteredItems,
       upcomingEvents,
     };
-  }, [state, appointments, events, tasks]);
+  }, [state]);
 
   return <CalendarContext.Provider value={value}>{children}</CalendarContext.Provider>;
 }

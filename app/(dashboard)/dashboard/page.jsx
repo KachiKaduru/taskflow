@@ -4,7 +4,6 @@ import CreateNew from "@/app/_components/ui/CreateForm";
 import ScheduleOverview from "@/app/_components/dashboard/ScheduleOverview";
 import ProductivityChart from "@/app/_components/ui/ProductivityChart";
 import UpcomingEvents from "@/app/_components/ui/UpcomingEvents";
-import QuickAddSection from "@/app/_components/ui/QuickAddSection";
 
 export const metadata = {
   title: "Dashboard",
@@ -30,7 +29,6 @@ export default function DashboardPage() {
 
         <div className=" space-y-6">
           <UpcomingEvents />
-          <QuickAddSection />
         </div>
       </div>
     </div>

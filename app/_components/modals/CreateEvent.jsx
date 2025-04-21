@@ -14,17 +14,51 @@ export default function CreateEvent({ onClose }) {
 
   const queryClient = useQueryClient();
 
+  // const { isPending, mutate } = useMutation({
+  //   mutationFn: async (newEvent) => {
+  //     await Promise.all([createEvent(newEvent), createGoogleEvent(newEvent)]);
+  //   },
+  //   onSuccess: (newEvent) => {
+  //     queryClient.invalidateQueries(["events"]);
+  //     onClose();
+  //   },
+  //   onError: (error) => {
+  //     throw new Error("Error creating event: ", error);
+  //   },
+  // });
+
   const { isPending, mutate } = useMutation({
     mutationFn: async (newEvent) => {
       await Promise.all([createEvent(newEvent), createGoogleEvent(newEvent)]);
+      return newEvent; // Return the task so we can use it in onSuccess
     },
-    onSuccess: (newEvent) => {
-      queryClient.invalidateQueries(["events"]);
+    // Optimistically update the cache
+    onMutate: async (newEvent) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries(["events"]);
+
+      // Snapshot the previous value
+      const previousEvents = queryClient.getQueryData(["events"]) || [];
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(["events"], [...previousEvents, newEvent]);
+
       onClose();
+
+      // Return context with the snapshotted value
+      return { previousEvents };
     },
-    onError: (error) => {
-      throw new Error("Error creating event: ", error);
+    // If the mutation fails, roll back
+    onError: (err, newEvent, context) => {
+      queryClient.setQueryData(["events"], context.previousEvents);
+      // Consider showing a toast notification here
+      console.error("Error creating appointment: ", err);
     },
+    // Always refetch after error or success
+    onSettled: () => {
+      queryClient.invalidateQueries(["events"]);
+    },
+    onSuccess: () => {},
   });
 
   const handleSubmit = async (formData) => {

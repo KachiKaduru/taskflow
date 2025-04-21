@@ -14,7 +14,7 @@ export default function SubmitButton({ color = "blue", isLoading = false, button
       disabled={isLoading}
     >
       <span>
-        {!isLoading ? "Add" : "Creating"} {buttonFor}
+        {!isLoading ? "Create" : "Creating"} {buttonFor}
       </span>
       {isLoading && <Spinner size="sm" color={color} />}
     </button>

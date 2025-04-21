@@ -14,6 +14,10 @@ export default function CreateForm() {
 
   const types = ["task", "event", "appointment"];
 
+  const toggleDropdown = () => {
+    setDropdown((d) => !d);
+  };
+
   const openModal = (e) => {
     setSelected(e);
     setIsModalOpen(true);
@@ -28,7 +32,7 @@ export default function CreateForm() {
   return (
     <div>
       <button
-        onClick={() => setDropdown(true)}
+        onClick={toggleDropdown}
         className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow-sm transition-colors cursor-pointer relative"
       >
         <div className="flex gap-1 pr-4">
