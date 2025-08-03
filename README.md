@@ -49,3 +49,6 @@ npm install
 
 # Run the development server
 npm run dev
+
+# Visit http://localhost:3000 to view locally.
+Note: You’ll need to configure Supabase and Google OAuth credentials to make authentication and calendar syncing work during development.
