@@ -1,44 +1,50 @@
 "use server";
 
 import type { CreateEventInput, EventItem } from "@/app/_types";
-import { auth } from "../auth";
-import { supabase } from "../supabase";
+import { apiClient } from "../api";
+import { getBackendToken } from "./authActions";
 
 export async function createEvent(event: CreateEventInput): Promise<void> {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    throw new Error("Cannot create event without an authenticated user");
+  const token = await getBackendToken();
+  if (!token) {
+    throw new Error("Backend authentication token not found. Please sign in again.");
   }
 
-  const { error } = await supabase
-    .from("events")
-    .insert([{ ...event, user_id: session.user.id }])
-    .select();
+  // Map frontend event structure to backend API format
+  const eventData = {
+    title: event.title,
+    description: event.description || null,
+    location: event.location || null,
+    start_time: event.startTime,
+    end_time: event.endTime || null,
+    is_virtual: event.isVirtual || false,
+    event_type: event.eventType || null,
+    duration: event.duration || null,
+  };
 
-  if (error) {
-    console.error(error);
-    throw new Error(`Could not create event: ${error.message}`);
-  }
+  await apiClient.createEvent(eventData, token);
 }
 
 export async function getEvents(): Promise<EventItem[]> {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    throw new Error("Cannot fetch events without an authenticated user");
+  const token = await getBackendToken();
+  if (!token) {
+    throw new Error("Backend authentication token not found. Please sign in again.");
   }
+  const events = await apiClient.getEvents(token);
 
-  const { data, error } = await supabase
-    .from("events")
-    .select("*")
-    .eq("user_id", session.user.id);
-
-  if (error) {
-    console.error(error);
-    throw new Error(`Could not fetch events: ${error.message}`);
-  }
-
-  return (data ?? []) as EventItem[];
+  // Map backend event structure to frontend format
+  return events.map((event: any) => ({
+    id: event.id,
+    title: event.title,
+    description: event.description || null,
+    location: event.location || null,
+    startTime: event.start_time,
+    endTime: event.end_time || null,
+    isVirtual: event.is_virtual || false,
+    eventType: event.event_type || null,
+    duration: event.duration || null,
+    createdAt: event.created_at || null,
+    updatedAt: event.updated_at || null,
+    userId: event.user_id || null,
+  })) as EventItem[];
 }
-

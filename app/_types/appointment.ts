@@ -9,7 +9,6 @@ export interface AppointmentItem {
   time?: string | null;
   duration?: number | null;
   status?: AppointmentStatus;
-  attendee?: string | null;
   withPerson?: string | null;
   notes?: string | null;
   preparationTime?: number | null;
@@ -22,5 +21,3 @@ export interface CreateAppointmentInput
   extends Omit<AppointmentItem, "id" | "createdAt" | "updatedAt" | "userId"> {
   id: string | number;
 }
-
-

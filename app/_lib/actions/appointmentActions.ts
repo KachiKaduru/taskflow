@@ -1,44 +1,56 @@
 "use server";
 
 import type { AppointmentItem, CreateAppointmentInput } from "@/app/_types";
-import { auth } from "../auth";
-import { supabase } from "../supabase";
+import { apiClient } from "../api";
+import { getBackendToken } from "./authActions";
 
 export async function createAppointment(appointment: CreateAppointmentInput): Promise<void> {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    throw new Error("Cannot create appointment without an authenticated user");
+  const token = await getBackendToken();
+  if (!token) {
+    throw new Error("Backend authentication token not found. Please sign in again.");
   }
 
-  const { error } = await supabase
-    .from("appointments")
-    .insert([{ ...appointment, user_id: session.user.id }])
-    .select();
+  // Map frontend appointment structure to backend API format
+  const appointmentData = {
+    title: appointment.title,
+    description: appointment.description || null,
+    location: appointment.location || null,
+    date: appointment.date,
+    time: appointment.time || null,
+    duration: appointment.duration || null,
+    status: appointment.status || "scheduled",
+    attendee: appointment.attendee || null,
+    with_person: appointment.withPerson || null,
+    notes: appointment.notes || null,
+    preparation_time: appointment.preparationTime || null,
+  };
 
-  if (error) {
-    console.error(error);
-    throw new Error(`Could not create appointment: ${error.message}`);
-  }
+  await apiClient.createAppointment(appointmentData, token);
 }
 
 export async function getAppointments(): Promise<AppointmentItem[]> {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    throw new Error("Cannot fetch appointments without an authenticated user");
+  const token = await getBackendToken();
+  if (!token) {
+    throw new Error("Backend authentication token not found. Please sign in again.");
   }
+  const appointments = await apiClient.getAppointments(token);
 
-  const { data, error } = await supabase
-    .from("appointments")
-    .select("*")
-    .eq("user_id", session.user.id);
-
-  if (error) {
-    console.error(error);
-    throw new Error(`Could not fetch appointments: ${error.message}`);
-  }
-
-  return (data ?? []) as AppointmentItem[];
+  // Map backend appointment structure to frontend format
+  return appointments.map((appointment: any) => ({
+    id: appointment.id,
+    title: appointment.title,
+    description: appointment.description || null,
+    location: appointment.location || null,
+    date: appointment.date,
+    time: appointment.time || null,
+    duration: appointment.duration || null,
+    status: appointment.status || "scheduled",
+    attendee: appointment.attendee || null,
+    withPerson: appointment.with_person || null,
+    notes: appointment.notes || null,
+    preparationTime: appointment.preparation_time || null,
+    createdAt: appointment.created_at || null,
+    updatedAt: appointment.updated_at || null,
+    userId: appointment.user_id || null,
+  })) as AppointmentItem[];
 }
-

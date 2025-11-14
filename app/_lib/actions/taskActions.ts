@@ -1,44 +1,49 @@
 "use server";
 
 import type { CreateTaskInput, TaskItem } from "@/app/_types";
-import { auth } from "../auth";
-import { supabase } from "../supabase";
+import { apiClient } from "../api";
+import { getBackendToken } from "./authActions";
 
 export async function createTask(task: CreateTaskInput): Promise<void> {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    throw new Error("Cannot create task without an authenticated user");
+  const token = await getBackendToken();
+  if (!token) {
+    throw new Error("Backend authentication token not found. Please sign in again.");
   }
 
-  const { error } = await supabase
-    .from("tasks")
-    .insert([{ ...task, user_id: session.user.id }])
-    .select();
+  // Map frontend task structure to backend API format
+  const taskData = {
+    title: task.title,
+    description: task.description || null,
+    due_date: task.dueDate || null,
+    priority: task.isPriority ? "high" : "medium",
+    is_completed: task.isCompleted || false,
+    is_recurring: task.isRecurring || false,
+    recurrence_days: task.recurrenceDays || null,
+    // Add other fields as needed based on backend schema
+  };
 
-  if (error) {
-    console.error(error);
-    throw new Error(`Could not create task: ${error.message}`);
-  }
+  await apiClient.createTask(taskData, token);
 }
 
 export async function getTasks(): Promise<TaskItem[]> {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    throw new Error("Cannot fetch tasks without an authenticated user");
+  const token = await getBackendToken();
+  if (!token) {
+    throw new Error("Backend authentication token not found. Please sign in again.");
   }
+  const tasks = await apiClient.getTasks(token);
 
-  const { data, error } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("user_id", session.user.id);
-
-  if (error) {
-    console.error(error);
-    throw new Error(`Could not fetch tasks: ${error.message}`);
-  }
-
-  return (data ?? []) as TaskItem[];
+  // Map backend task structure to frontend format
+  return tasks.map((task: any) => ({
+    id: task.id,
+    title: task.title,
+    description: task.description || null,
+    dueDate: task.due_date || null,
+    isCompleted: task.is_completed || false,
+    isPriority: task.priority === "high",
+    isRecurring: task.is_recurring || false,
+    recurrenceDays: task.recurrence_days || null,
+    createdAt: task.created_at || null,
+    updatedAt: task.updated_at || null,
+    userId: task.user_id || null,
+  })) as TaskItem[];
 }
-

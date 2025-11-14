@@ -1,7 +1,9 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import { createUser, getUserEmail } from "./actions/userActions";
-import type { CreateUserInput, UserRecord } from "@/app/_types";
+import { getUserEmail } from "./actions/userActions";
+import { getBackendToken } from "./backendAuth";
+import { apiClient } from "./api";
+import type { UserRecord } from "@/app/_types";
 
 type AuthAccount = {
   access_token?: string;
@@ -24,6 +26,7 @@ type AuthSession = {
   accessToken?: string;
   refreshToken?: string;
   expiresAt?: number;
+  backendToken?: string; // JWT token from FastAPI backend
 };
 
 type AuthToken = {
@@ -31,6 +34,7 @@ type AuthToken = {
   accessToken?: string;
   refreshToken?: string;
   expiresAt?: number;
+  backendToken?: string; // JWT token from FastAPI backend
 };
 
 const googleClientId = process.env.AUTH_GOOGLE_ID ?? "";
@@ -65,14 +69,26 @@ const authConfig = {
       }
 
       try {
-        const existingUser = await getUserEmail(user.email);
-        if (!existingUser) {
-          const payload: CreateUserInput = {
-            name: user.name ?? null,
-            email: user.email,
-            image: user.image ?? null,
-          };
-          await createUser(payload);
+        // Get backend JWT token (this will create user if they don't exist)
+        // The getBackendToken function handles user creation automatically
+        try {
+          const backendToken = await getBackendToken(user.email, user.name, user.image);
+          user.backendToken = backendToken;
+
+          // Get user info from backend to set user.id
+          try {
+            const backendUser = await apiClient.getCurrentUser(backendToken);
+            if (backendUser?.id) {
+              user.id = backendUser.id.toString();
+            }
+          } catch (userError) {
+            console.error("Error getting user info from backend:", userError);
+            // Continue without user ID, it will be set in session callback
+          }
+        } catch (backendError) {
+          console.error("Error getting backend token:", backendError);
+          // Continue with sign-in even if backend token fails
+          // User can still use the app, but API calls might fail
         }
 
         if (account) {
@@ -105,6 +121,10 @@ const authConfig = {
         token.id = user.id;
       }
 
+      if (user?.backendToken) {
+        token.backendToken = user.backendToken;
+      }
+
       return token;
     },
     async session({ session, token }: { session: AuthSession; token: AuthToken }) {
@@ -118,6 +138,7 @@ const authConfig = {
       session.accessToken = token.accessToken;
       session.refreshToken = token.refreshToken;
       session.expiresAt = token.expiresAt;
+      session.backendToken = token.backendToken;
 
       return session;
     },
