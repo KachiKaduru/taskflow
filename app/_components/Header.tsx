@@ -1,11 +1,10 @@
 import Image from "next/image";
-import { auth } from "../_lib/auth";
+import { getSession } from "../_lib/auth/session";
 import PageHeading from "./ui/PageHeading";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 export default async function Header() {
-  const session = await auth();
-  // console.log(session);
+  const session = await getSession();
 
   const avatarSrc = session?.user?.image ?? "/next.svg";
   const avatarAlt = session?.user?.name ?? session?.user?.email ?? "User avatar";

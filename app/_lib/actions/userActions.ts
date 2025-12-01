@@ -1,7 +1,7 @@
 "use server";
 
 import type { CreateUserInput, UserRecord } from "@/app/_types";
-import { apiClient } from "../api";
+import { apiClient } from "../apiClient";
 import { logout as logoutAction, getBackendToken } from "./authActions";
 
 // OAuth functions commented out - using email/password auth now
@@ -47,31 +47,71 @@ export async function getUserEmail(email: string): Promise<UserRecord | null> {
   }
 }
 
-// Note: User creation is now handled by getBackendToken in backendAuth.ts
-// This function is kept for backward compatibility but is no longer used in the auth flow
+// Note: User creation should use the register endpoint via authActions.signup()
+// This function is kept for backward compatibility (e.g., OAuth flows)
+// but the primary registration flow should use /auth/create-user endpoint
 export async function createUser(newUser: CreateUserInput): Promise<UserRecord[]> {
   try {
-    // Import the backend auth helper to create user
-    const { getBackendToken } = await import("../backendAuth");
+    // Use the register endpoint
+    await apiClient.register({
+      email: newUser.email,
+      password: newUser.password || "temp-password-oauth", // OAuth users may not have password
+      name: newUser.name || null,
+    });
 
-    // Get backend token (which will create user if needed)
-    const token = await getBackendToken(newUser.email, newUser.name, newUser.image);
+    // If password was provided, we can get the token and user info
+    // Otherwise, this is for OAuth and the user will authenticate separately
+    if (newUser.password) {
+      const authResponse = await apiClient.login(newUser.email, newUser.password);
+      const backendUser = await apiClient.getCurrentUser(authResponse.access_token);
 
-    // Get user info from backend
-    const backendUser = await apiClient.getCurrentUser(token);
+      return [
+        {
+          id: backendUser.id?.toString() || "",
+          name: backendUser.name || null,
+          email: backendUser.email,
+          image: backendUser.image || null,
+          createdAt: backendUser.created_at || null,
+          updatedAt: backendUser.updated_at || null,
+        },
+      ];
+    }
 
+    // For OAuth users without password, return minimal user record
+    // They'll need to authenticate via OAuth flow
     return [
       {
-        id: backendUser.id?.toString() || "",
-        name: backendUser.name || null,
-        email: backendUser.email,
-        image: backendUser.image || null,
-        createdAt: backendUser.created_at || null,
-        updatedAt: backendUser.updated_at || null,
+        id: "",
+        name: newUser.name || null,
+        email: newUser.email,
+        image: newUser.image || null,
+        createdAt: null,
+        updatedAt: null,
       },
     ];
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating user:", error);
+    // If user already exists, try to get their info
+    if (error.message?.includes("already exists") || error.message?.includes("409")) {
+      const token = await getBackendToken();
+      if (token) {
+        try {
+          const backendUser = await apiClient.getCurrentUser(token);
+          return [
+            {
+              id: backendUser.id?.toString() || "",
+              name: backendUser.name || null,
+              email: backendUser.email,
+              image: backendUser.image || null,
+              createdAt: backendUser.created_at || null,
+              updatedAt: backendUser.updated_at || null,
+            },
+          ];
+        } catch {
+          // Fall through to throw error
+        }
+      }
+    }
     throw new Error("User could not be created");
   }
 }

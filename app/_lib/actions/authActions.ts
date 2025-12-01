@@ -1,11 +1,16 @@
 "use server";
 
-import { apiClient } from "../api";
-import { cookies } from "next/headers";
+import { apiClient } from "../apiClient";
+import { setServerToken, removeServerToken, getServerToken } from "../auth/token";
 import { redirect } from "next/navigation";
 
+// Helper to check if error is a Next.js redirect
+function isRedirectError(error: any): boolean {
+  return error?.digest?.startsWith("NEXT_REDIRECT");
+}
+
 /**
- * Sign up a new user with email and password
+ * Register a new user
  */
 export async function signup(formData: FormData) {
   const email = formData.get("email") as string;
@@ -27,28 +32,27 @@ export async function signup(formData: FormData) {
   }
 
   try {
-    // Create user in backend
-    await apiClient.createUser({
+    // Register user with backend
+    await apiClient.register({
       email,
-      name: fullName,
       password,
+      name: fullName,
     });
 
     // Automatically log them in after signup
-    const authResponse = await apiClient.authenticate(email, password);
-    const token = authResponse.access_token;
+    const authResponse = await apiClient.login(email, password);
 
-    // Store token in cookie
-    cookies().set("backend_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
+    // Store token in cookie for server-side access
+    await setServerToken(authResponse.access_token);
 
     // Redirect to dashboard
     redirect("/dashboard");
   } catch (error: any) {
+    // Re-throw redirect errors - they're not actual errors!
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
     console.error("Signup error:", error);
     return {
       error: error.message || "Failed to create account. Email may already be in use.",
@@ -70,20 +74,19 @@ export async function login(formData: FormData) {
 
   try {
     // Authenticate with backend
-    const authResponse = await apiClient.authenticate(email, password);
-    const token = authResponse.access_token;
+    const authResponse = await apiClient.login(email, password);
 
-    // Store token in cookie
-    cookies().set("backend_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
+    // Store token in cookie for server-side access
+    await setServerToken(authResponse.access_token);
 
     // Redirect to dashboard
     redirect("/dashboard");
   } catch (error: any) {
+    // Re-throw redirect errors - they're not actual errors!
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
     console.error("Login error:", error);
     return {
       error: error.message || "Invalid email or password",
@@ -95,15 +98,13 @@ export async function login(formData: FormData) {
  * Log out the user
  */
 export async function logout() {
-  cookies().delete("backend_token");
+  await removeServerToken();
   redirect("/login");
 }
 
 /**
- * Get the backend token from cookies
+ * Get the backend token from cookies (for server-side use)
  */
 export async function getBackendToken(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("backend_token")?.value;
-  return token || null;
+  return await getServerToken();
 }

@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
 import FormInput from "./form/FormInput";
 import FormLabel from "./form/FormLabel";
 import { signup, login } from "../_lib/actions/authActions";
+import { syncTokenFromCookie } from "../_lib/auth/token";
 
 export default function AuthForm({ formType = "loginForm" }) {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Sync token from cookie to localStorage on mount (in case user was redirected after login)
+  useEffect(() => {
+    syncTokenFromCookie();
+  }, []);
 
   const loginForm = [
     { name: "email", type: "email", label: "Email" },

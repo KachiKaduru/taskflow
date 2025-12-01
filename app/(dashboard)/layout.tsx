@@ -6,6 +6,7 @@ import Sidebar from "../_components/Sidebar";
 import { getTasks } from "../_lib/actions/taskActions";
 import { getEvents } from "../_lib/actions/eventActions";
 import { getAppointments } from "../_lib/actions/appointmentActions";
+import type { TaskItem, EventItem, AppointmentItem } from "../_types";
 import { Toaster } from "react-hot-toast";
 
 interface DashboardLayoutProps {
@@ -13,11 +14,30 @@ interface DashboardLayoutProps {
 }
 
 export default async function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [tasks, events, appointments] = await Promise.all([
-    getTasks(),
-    getEvents(),
-    getAppointments(),
-  ]);
+  // Handle errors gracefully - if API calls fail, use empty arrays
+  let tasks: TaskItem[] = [];
+  let events: EventItem[] = [];
+  let appointments: AppointmentItem[] = [];
+
+  try {
+    [tasks, events, appointments] = await Promise.all([
+      getTasks().catch((error) => {
+        console.error("Error fetching tasks:", error);
+        return [];
+      }),
+      getEvents().catch((error) => {
+        console.error("Error fetching events:", error);
+        return [];
+      }),
+      getAppointments().catch((error) => {
+        console.error("Error fetching appointments:", error);
+        return [];
+      }),
+    ]);
+  } catch (error) {
+    console.error("Error in dashboard layout:", error);
+    // Continue with empty arrays
+  }
 
   return (
     <ClientProvider fetchedData={{ tasks, events, appointments }}>

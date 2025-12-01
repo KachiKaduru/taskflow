@@ -2,7 +2,11 @@
 
 import { google } from "googleapis";
 import type { CreateAppointmentInput, CreateEventInput, CreateTaskInput } from "@/app/_types";
-import { auth } from "./auth";
+import { getSession } from "./auth/session";
+
+// Note: Google Calendar integration requires OAuth tokens
+// Since we removed NextAuth, this feature may not work unless OAuth is re-implemented
+// For now, these functions will fail gracefully and return null
 
 type CalendarExportInput = CreateEventInput | CreateAppointmentInput;
 
@@ -59,9 +63,16 @@ const resolveDescription = (data: CalendarExportInput): string => {
 };
 
 export async function createGoogleEvent(eventData: CalendarExportInput): Promise<string | null> {
-  const session = await auth();
+  // Google Calendar integration requires OAuth tokens
+  // Since we removed NextAuth, this feature is temporarily disabled
+  // Return null to fail gracefully - the main backend creation will still work
+  console.warn("Google Calendar integration is disabled. OAuth tokens are not available.");
+  return null;
+  
+  /* TODO: Re-implement OAuth flow if Google Calendar sync is needed
+  const session = await getSession();
   if (!session?.accessToken) {
-    throw new Error("Missing Google access token for calendar export");
+    return null; // Fail gracefully instead of throwing
   }
 
   const calendar = google.calendar({
@@ -108,12 +119,20 @@ export async function createGoogleEvent(eventData: CalendarExportInput): Promise
     console.error("Error creating Google Calendar event:", error);
     return null;
   }
+  */
 }
 
 export async function createGoogleTask(taskData: CreateTaskInput): Promise<string | null> {
-  const session = await auth();
+  // Google Tasks integration requires OAuth tokens
+  // Since we removed NextAuth, this feature is temporarily disabled
+  // Return null to fail gracefully - the main backend creation will still work
+  console.warn("Google Tasks integration is disabled. OAuth tokens are not available.");
+  return null;
+  
+  /* TODO: Re-implement OAuth flow if Google Tasks sync is needed
+  const session = await getSession();
   if (!session?.accessToken) {
-    throw new Error("Missing Google access token for task export");
+    return null; // Fail gracefully instead of throwing
   }
 
   const tasks = google.tasks({
@@ -145,4 +164,5 @@ export async function createGoogleTask(taskData: CreateTaskInput): Promise<strin
     console.error("Error creating Google Task:", error);
     return null;
   }
+  */
 }

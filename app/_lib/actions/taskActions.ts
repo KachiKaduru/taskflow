@@ -1,7 +1,7 @@
 "use server";
 
 import type { CreateTaskInput, TaskItem } from "@/app/_types";
-import { apiClient } from "../api";
+import { apiClient } from "../apiClient";
 import { getBackendToken } from "./authActions";
 
 export async function createTask(task: CreateTaskInput): Promise<void> {
@@ -46,4 +46,35 @@ export async function getTasks(): Promise<TaskItem[]> {
     updatedAt: task.updated_at || null,
     userId: task.user_id || null,
   })) as TaskItem[];
+}
+
+export async function updateTask(
+  taskId: string | number,
+  task: Partial<CreateTaskInput>
+): Promise<void> {
+  const token = await getBackendToken();
+  if (!token) {
+    throw new Error("Backend authentication token not found. Please sign in again.");
+  }
+
+  // Map frontend task structure to backend API format
+  const taskData: any = {};
+  if (task.title !== undefined) taskData.title = task.title;
+  if (task.description !== undefined) taskData.description = task.description || null;
+  if (task.dueDate !== undefined) taskData.due_date = task.dueDate || null;
+  if (task.isPriority !== undefined) taskData.priority = task.isPriority ? "high" : "medium";
+  if (task.isCompleted !== undefined) taskData.is_completed = task.isCompleted || false;
+  if (task.isRecurring !== undefined) taskData.is_recurring = task.isRecurring || false;
+  if (task.recurrenceDays !== undefined) taskData.recurrence_days = task.recurrenceDays || null;
+
+  await apiClient.updateTask(taskId, taskData, token);
+}
+
+export async function deleteTask(taskId: string | number): Promise<void> {
+  const token = await getBackendToken();
+  if (!token) {
+    throw new Error("Backend authentication token not found. Please sign in again.");
+  }
+
+  await apiClient.deleteTask(taskId, token);
 }

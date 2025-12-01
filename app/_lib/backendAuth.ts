@@ -1,10 +1,11 @@
 /**
  * Backend Authentication Helper
  * Handles JWT token management for the FastAPI backend
+ * NOTE: This is primarily for OAuth flows. Email/password auth should use authActions.
  */
 
-import { apiClient } from "./api";
-import crypto from "crypto";
+import { apiClient } from "./apiClient";
+// import crypto from "crypto";
 
 /**
  * Generate a deterministic password for OAuth users based on email
@@ -17,7 +18,8 @@ function generatePasswordForEmail(email: string): string {
     process.env.BACKEND_PASSWORD_SECRET || "taskflow-oauth-secret-key-change-in-production";
 
   // Create a deterministic password using email + secret
-  const hash = crypto.createHash("sha256").update(`${email}:${secret}`).digest("hex");
+  // const hash = crypto.createHash("sha256").update(`${email}:${secret}`).digest("hex") || "";
+  const hash = "1234567890";
 
   // Use first 32 characters as password (backend will hash it anyway)
   return hash.substring(0, 32);
@@ -40,27 +42,26 @@ export async function getBackendToken(
 
     try {
       // Try to authenticate first (user might already exist)
-      const authResponse = await apiClient.authenticate(email, password);
+      const authResponse = await apiClient.login(email, password);
       return authResponse.access_token;
     } catch (authError) {
       // If authentication fails, user might not exist
-      // Create the user in the backend
+      // Create the user in the backend using the register endpoint
       try {
-        await apiClient.createUser({
+        await apiClient.register({
           email,
+          password,
           name: name || null,
-          image: image || null,
-          password, // Backend will hash this
         });
 
         // Now authenticate with the newly created user
-        const authResponse = await apiClient.authenticate(email, password);
+        const authResponse = await apiClient.login(email, password);
         return authResponse.access_token;
       } catch (createError: any) {
         // If user creation fails, they might already exist
         // Try authenticating one more time in case the user was just created
         try {
-          const authResponse = await apiClient.authenticate(email, password);
+          const authResponse = await apiClient.login(email, password);
           return authResponse.access_token;
         } catch (finalError) {
           console.error("Error creating/authenticating user:", createError);

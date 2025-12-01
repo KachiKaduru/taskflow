@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { getUserEmail } from "./actions/userActions";
 import { getBackendToken } from "./backendAuth";
-import { apiClient } from "./api";
+import { apiClient } from "./apiClient";
 import type { UserRecord } from "@/app/_types";
 
 type AuthAccount = {
@@ -19,6 +19,7 @@ type AuthUser = {
   accessToken?: string;
   refreshToken?: string;
   expiresAt?: number;
+  backendToken?: string; // JWT token from FastAPI backend
 };
 
 type AuthSession = {
@@ -45,6 +46,10 @@ if (!googleClientId || !googleClientSecret) {
 }
 
 const authConfig = {
+  secret:
+    process.env.AUTH_SECRET ||
+    process.env.NEXTAUTH_SECRET ||
+    "taskflow-secret-key-change-in-production",
   providers: [
     Google({
       clientId: googleClientId,
